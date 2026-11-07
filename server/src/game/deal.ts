@@ -43,7 +43,7 @@ export const FALLBACK: Record<number, RoleId[]> = {
 
 /**
  * Rút ngẫu nhiên n vai (5..10) sao cho: đủ số người phe Sói theo cỡ bàn (có ít nhất một Sói thật),
- * phe thứ ba chỉ từ 8 người và tối đa một, Thần Tình Yêu từ 6 người, mỗi vai đặc biệt tối đa một lá,
+ * phe thứ ba chỉ từ 8 người và tối đa một, Thần Tình Yêu và Nhà Ngoại Cảm từ 6 người, mỗi vai đặc biệt tối đa một lá,
  * và tổng điểm cân bằng nằm trong [-3, +3]. Trả về danh sách vai đã xáo, chưa gán cho ai.
  */
 export function dealRoles(n: number, rng: Rng = Math.random): RoleId[] {
@@ -59,7 +59,8 @@ export function dealRoles(n: number, rng: Rng = Math.random): RoleId[] {
       size >= 8 && rng() < 0.5 ? (rng() < 0.5 ? 'jester' : 'whitewolf') : null;
     const rest = size - wolves.length - (third ? 1 : 0);
     const pool = shuffle(
-      VILLAGE_SPECIAL.filter((r) => r !== 'cupid' || size >= 6),
+      // Bàn 5 người không có Nhà Ngoại Cảm; Thần Tình Yêu chỉ từ 6 người.
+      VILLAGE_SPECIAL.filter((r) => (r !== 'cupid' || size >= 6) && (r !== 'psychic' || size >= 6)),
       rng,
     );
     const special = pool.slice(

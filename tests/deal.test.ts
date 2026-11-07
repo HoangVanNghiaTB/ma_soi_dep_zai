@@ -36,6 +36,8 @@ describe('dealRoles', () => {
         expect(third.length).toBeLessThanOrEqual(1);
         if (n < 8) expect(third).toHaveLength(0);
         if (n < 6) expect(roles).not.toContain('cupid');
+        // Bàn 5 người không có Nhà Ngoại Cảm.
+        if (n < 6) expect(roles).not.toContain('psychic');
 
         for (const r of SPECIAL_ONCE) {
           expect(roles.filter((x) => x === r).length).toBeLessThanOrEqual(1);

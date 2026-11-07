@@ -118,6 +118,7 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
    - Ma Sói tối đa 3 lá. Dân làng không giới hạn. Các vai còn lại mỗi vai tối đa **một** lá.
    - **Phe thứ ba** chỉ xuất hiện khi N ≥ 8, mỗi ván tối đa **một** vai phe thứ ba.
    - Thần Tình Yêu chỉ xuất hiện khi N ≥ 6.
+   - **Nhà Ngoại Cảm cũng chỉ xuất hiện khi N ≥ 6**: bàn 5 người không có vai này.
 2. **Cộng điểm cân bằng** các lá vừa rút. Tổng nằm trong **−3 đến +3** thì dùng, không thì rút lại (thử tối đa vài trăm lần).
 3. Không ra đội hình hợp lệ (hiếm) thì dùng **đội hình mẫu** dưới đây rồi xáo ngẫu nhiên cho từng người.
 

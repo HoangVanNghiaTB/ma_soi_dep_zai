@@ -493,7 +493,7 @@ Danh sách vai, điểm cân bằng và điều kiện thắng **không** chỉn
 
 ## 16. Kiểm thử
 
-- **Chia vai** (`deal.ts`): với mỗi N từ 5 đến 10, chạy hàng nghìn lần, kiểm tra luôn đúng số Sói, đúng giới hạn lá, tổng điểm cân bằng trong −3 đến +3, phe thứ ba chỉ từ N ≥ 8, Thần Tình Yêu chỉ từ N ≥ 6, luôn có Sói thật.
+- **Chia vai** (`deal.ts`): với mỗi N từ 5 đến 10, chạy hàng nghìn lần, kiểm tra luôn đúng số Sói, đúng giới hạn lá, tổng điểm cân bằng trong −3 đến +3, phe thứ ba chỉ từ N ≥ 8, Thần Tình Yêu và Nhà Ngoại Cảm chỉ từ N ≥ 6 (bàn 5 người không có hai vai này), luôn có Sói thật.
 - **Tính kết quả đêm** (`resolve.ts`): bảng ca thử cho Bảo Vệ che, Phù Thủy cứu và độc cùng đêm, Sói sắp biến (đủ điều kiện và không đủ), Sói Trắng giết, cặp đôi chết dây chuyền, Thợ Săn bị cắn, Sói Con chết.
 - **Thắng thua** (`win.ts`): các tình huống Sói Trắng, Chán Đời, Kẻ Phản Bội, người bị biến.
 - **View** (`viewFor`): kiểm tra **không bao giờ lọt vai thật** của người khác vào view của người sống, với mọi giai đoạn.
