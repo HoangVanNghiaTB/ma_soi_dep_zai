@@ -21,7 +21,7 @@ describe('wolfCount', () => {
 
 describe('dealRoles', () => {
   it('mọi cỡ bàn: đủ N vai, đúng luật chia, tổng điểm cân bằng trong [-3, +3]', () => {
-    for (let n = 5; n <= 10; n++) {
+    for (let n = 6; n <= 10; n++) {
       for (let k = 0; k < 300; k++) {
         const roles = dealRoles(n);
         expect(roles).toHaveLength(n);
@@ -48,6 +48,24 @@ describe('dealRoles', () => {
         expect(b).toBeLessThanOrEqual(BALANCE.max);
       }
     }
+  });
+
+  it('bàn 5 người: vai bất kỳ, chỉ cần điểm cân bằng hợp lệ và có Sói', () => {
+    const seen = new Set<string>();
+    for (let k = 0; k < 500; k++) {
+      const roles = dealRoles(5);
+      expect(roles).toHaveLength(5);
+      const b = balanceOf(roles);
+      expect(b).toBeGreaterThanOrEqual(BALANCE.min);
+      expect(b).toBeLessThanOrEqual(BALANCE.max);
+      expect(roles.some((r) => ['werewolf', 'cub', 'alpha', 'whitewolf'].includes(r))).toBe(true);
+      for (const r of new Set(roles)) {
+        if (r !== 'villager' && r !== 'werewolf') expect(roles.filter((x) => x === r)).toHaveLength(1);
+      }
+      roles.forEach((r) => seen.add(r));
+    }
+    // Không còn bị gò: Nhà Ngoại Cảm, Thần Tình Yêu, phe thứ ba đều có thể xuất hiện.
+    for (const r of ['psychic', 'cupid', 'jester', 'whitewolf', 'traitor']) expect(seen.has(r as never)).toBe(true);
   });
 
   it('đội hình mẫu đều hợp lệ về điểm', () => {

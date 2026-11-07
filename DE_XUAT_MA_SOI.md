@@ -113,12 +113,11 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
 
 ### 5.2 Cách random vai (tổng điểm cân bằng từ −3 đến +3)
 
-1. Biết số người N (5 đến 10), server **rút ngẫu nhiên N lá** từ bộ 15 vai theo các luật:
-   - Số người phe Sói (Ma Sói, Sói Con, Sói Đầu Đàn, Kẻ Phản Bội): **1** khi N = 5, **2** khi N = 6 hoặc 7, **3** khi N từ 8 đến 10. Luôn có ít nhất một **Sói thật** (không chỉ Kẻ Phản Bội).
+0. **Bàn 5 người là ngoại lệ:** rút 5 lá bất kỳ từ bộ bài, **không theo các luật chia phe dưới đây**, chỉ cần tổng điểm cân bằng trong −3 đến +3. Chỉ giữ hai điều tối thiểu: mỗi lá không quá số bản của bộ bài thật (Ma Sói tối đa 3, vai đặc biệt 1, Dân làng tuỳ ý) và có ít nhất một Sói (Ma Sói, Sói Con, Sói Đầu Đàn hoặc Sói Trắng), nếu không ván kết thúc ngay.
+1. Với N từ 6 đến 10, server **rút ngẫu nhiên N lá** từ bộ 15 vai theo các luật:
+   - Số người phe Sói (Ma Sói, Sói Con, Sói Đầu Đàn, Kẻ Phản Bội): **2** khi N = 6 hoặc 7, **3** khi N từ 8 đến 10. Luôn có ít nhất một **Sói thật** (không chỉ Kẻ Phản Bội).
    - Ma Sói tối đa 3 lá. Dân làng không giới hạn. Các vai còn lại mỗi vai tối đa **một** lá.
    - **Phe thứ ba** chỉ xuất hiện khi N ≥ 8, mỗi ván tối đa **một** vai phe thứ ba.
-   - Thần Tình Yêu chỉ xuất hiện khi N ≥ 6.
-   - **Nhà Ngoại Cảm cũng chỉ xuất hiện khi N ≥ 6**: bàn 5 người không có vai này.
 2. **Cộng điểm cân bằng** các lá vừa rút. Tổng nằm trong **−3 đến +3** thì dùng, không thì rút lại (thử tối đa vài trăm lần).
 3. Không ra đội hình hợp lệ (hiếm) thì dùng **đội hình mẫu** dưới đây rồi xáo ngẫu nhiên cho từng người.
 
@@ -260,7 +259,7 @@ Sau bước 1 và 2 là chơi được bản thô, nên thử sớm.
 ## 11. Điều chưa chắc và cần bạn quyết
 
 - **Điểm / bảng xếp hạng:** đã bỏ phí và lãi của rạp. Có muốn ghi số ván thắng cho từng người không?
-- **Đội hình random chưa thử bằng ván thật.** Khoảng −3 đến +3 có thể vẫn lệch phe, nhất là bàn 5 người (chỉ một Sói).
+- **Đội hình random chưa thử bằng ván thật.** Khoảng −3 đến +3 có thể vẫn lệch phe, nhất là bàn 5 người (vai bất kỳ, chỉ ràng buộc bằng điểm).
 - **Luật vai phức tạp** (Sói Trắng, Thần Tình Yêu, Kẻ Phản Bội, mục 5.4) cần thử thật.
 - **Thời gian mỗi giai đoạn** (thảo luận 120 giây, bỏ phiếu 30 giây, đếm ngược 15 giây...) là ước đoán.
 - **Giọng quản trò phát ở đâu:** một máy chung hay mỗi máy tự phát.

@@ -1,4 +1,4 @@
-import { ROLES } from '@ms/shared';
+import { ROLES, ROLE_IDS, isWolfKind } from '@ms/shared';
 import type { RoleId } from '@ms/shared';
 
 export type Rng = () => number;
@@ -42,12 +42,30 @@ export const FALLBACK: Record<number, RoleId[]> = {
 };
 
 /**
+ * Bàn 5 người: rút vai bất kỳ, không theo quy tắc chia phe, chỉ cần tổng điểm cân bằng trong [-3, +3].
+ * Vẫn giữ hai điều tối thiểu: mỗi lá chỉ có số bản như bộ bài thật (Ma Sói tối đa 3, vai đặc biệt 1,
+ * Dân làng tuỳ ý) và có ít nhất một Sói, nếu không ván kết thúc ngay.
+ */
+function dealSmall(rng: Rng): RoleId[] {
+  const deck: RoleId[] = ROLE_IDS.flatMap((r) =>
+    Array<RoleId>(r === 'villager' ? 5 : r === 'werewolf' ? 3 : 1).fill(r),
+  );
+  for (let tries = 0; tries < 5000; tries++) {
+    const roles = shuffle(deck, rng).slice(0, 5);
+    const s = balanceOf(roles);
+    if (s >= BALANCE.min && s <= BALANCE.max && roles.some(isWolfKind)) return roles;
+  }
+  return shuffle(FALLBACK[5], rng);
+}
+
+/**
  * Rút ngẫu nhiên n vai (5..10) sao cho: đủ số người phe Sói theo cỡ bàn (có ít nhất một Sói thật),
  * phe thứ ba chỉ từ 8 người và tối đa một, Thần Tình Yêu và Nhà Ngoại Cảm từ 6 người, mỗi vai đặc biệt tối đa một lá,
  * và tổng điểm cân bằng nằm trong [-3, +3]. Trả về danh sách vai đã xáo, chưa gán cho ai.
  */
 export function dealRoles(n: number, rng: Rng = Math.random): RoleId[] {
   const size = Math.min(10, Math.max(5, n));
+  if (size === 5) return dealSmall(rng);
   for (let tries = 0; tries < 3000; tries++) {
     const wolves: RoleId[] = [TRUE_WOLVES[Math.floor(rng() * 3)]];
     while (wolves.length < wolfCount(size)) {

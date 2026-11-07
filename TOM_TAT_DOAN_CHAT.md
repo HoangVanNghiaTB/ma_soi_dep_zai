@@ -75,3 +75,4 @@ Một trang web Ma Sói 3D riêng (không còn nằm trong rạp), **thay bộ b
 
 - **Chọn vai ở bàn chờ:** chỉ chủ phòng chọn, bằng nút − / + cho từng vai. Phải chọn đủ bằng số người đang ngồi, có ít nhất một Sói và một người ngoài phe Sói; vai được xáo ngẫu nhiên cho từng người. Xoá hết thì máy tự chia cân bằng như cũ.
 - **Thời gian đọc vai đầu ván:** mặc định 20 giây (chỉnh 5–60 giây), chủ phòng bật hoặc tắt được. Thẻ bài tự mở chi tiết trong lúc đọc, hết giờ mới vào đêm 1.
+- **Bàn 5 người:** chia vai bất kỳ, chỉ theo tổng điểm cân bằng (−3 đến +3), không còn quy tắc số Sói hay phe thứ ba. Vẫn giữ: mỗi lá không quá số bản của bộ bài thật, và có ít nhất một Sói.
