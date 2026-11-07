@@ -335,3 +335,12 @@ input:focus { border-color: var(--accent); }
 .mini .left-stack { width: 168px; max-height: 46%; }
 .mini .icon-btn { width: 30px; height: 30px; font-size: 13px; }
 .mini .hud-tools { gap: 4px; }
+
+/* Màn hình thông báo trước trang chính */
+.notice-card { width: min(560px, 100%); text-align: left; gap: 12px; }
+.notice-card h1 { margin: 0; text-align: center; }
+.notice-card p { margin: 0; line-height: 1.5; }
+.notice-moon { font-size: 44px; text-align: center; }
+.notice-card ul { margin: 6px 0 0; padding-left: 20px; line-height: 1.5; }
+.notice-rule { padding: 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.compact .notice-moon { display: none; }

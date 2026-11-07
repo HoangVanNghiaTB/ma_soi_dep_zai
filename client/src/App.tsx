@@ -4,6 +4,16 @@ import { useStore } from './state/store';
 import { GameScreen } from './ui/GameScreen';
 import { Home } from './ui/Home';
 import { Lobby } from './ui/Lobby';
+import { Notice } from './ui/Notice';
+
+const SEEN_KEY = 'ms.notice.seen';
+function wasSeen(): boolean {
+  try {
+    return sessionStorage.getItem(SEEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 interface Layout {
   /** Điện thoại đang cầm dọc: xoay cả giao diện 90° để luôn hiển thị theo chiều ngang. */
@@ -46,6 +56,7 @@ export function App() {
   const room = useStore((s) => s.room);
   const view = useStore((s) => s.view);
   const layout = useLayout();
+  const [seen, setSeen] = useState(wasSeen);
 
   useEffect(() => {
     connect();
@@ -59,7 +70,20 @@ export function App() {
   const mini = layout.h <= 400;
 
   let screen;
-  if (!room) screen = <Home />;
+  if (!room && !seen) {
+    screen = (
+      <Notice
+        onContinue={() => {
+          try {
+            sessionStorage.setItem(SEEN_KEY, '1');
+          } catch {
+            /* bỏ qua */
+          }
+          setSeen(true);
+        }}
+      />
+    );
+  } else if (!room) screen = <Home />;
   else if (room.playing && view) screen = <GameScreen view={view} />;
   else screen = <Lobby />;
 
