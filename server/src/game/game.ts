@@ -29,6 +29,8 @@ export interface GameDeps {
   now?: () => number;
   /** Chỉ dùng khi kiểm thử: ép vai cho từng ghế thay vì chia ngẫu nhiên. */
   roles?: RoleId[];
+  /** Có dành thời gian đọc vai trước đêm đầu không. */
+  intro?: boolean;
   /** Có thay đổi, cần gửi view mới cho mọi người. */
   onChange: () => void;
   /** Phát một lời quản trò / hiệu ứng âm thanh cho cả bàn. */
@@ -201,6 +203,14 @@ export class Game {
 
   start(): void {
     this.maxTimer = setTimeout(() => this.endGame('aborted'), this.t.maxGameMs);
+    if (this.deps.intro && this.t.introMs > 0) {
+      this.phase = 'INTRO';
+      this.phaseStartedAt = this.now();
+      this.phaseEndsAt = this.now() + this.t.introMs;
+      this.after(this.t.introMs, () => this.startNight());
+      this.changed();
+      return;
+    }
     this.startNight();
   }
 

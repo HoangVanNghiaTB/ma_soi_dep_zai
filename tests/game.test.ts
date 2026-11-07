@@ -24,7 +24,7 @@ interface Harness {
   ended: () => boolean;
 }
 
-function make(roles: RoleId[], opts: { rng?: () => number; timings?: Partial<Timings> } = {}): Harness {
+function make(roles: RoleId[], opts: { rng?: () => number; timings?: Partial<Timings>; intro?: boolean } = {}): Harness {
   const cues: Cue[] = [];
   const fxs: Harness['fxs'] = [];
   const chats: Harness['chats'] = [];
@@ -35,6 +35,7 @@ function make(roles: RoleId[], opts: { rng?: () => number; timings?: Partial<Tim
       timings: { ...DEFAULT_TIMINGS, ...opts.timings },
       rng: opts.rng ?? mulberry32(7),
       roles,
+      intro: opts.intro,
       onChange: () => {},
       onCue: (c) => cues.push(c),
       onFx: (fx, audience) => fxs.push({ fx, audience }),
@@ -524,6 +525,25 @@ describe('phe Sói', () => {
     expect(view(h.game, 1).players[3].icon).toBe('wolf');
     expect(view(h.game, 3).players[3].icon).toBe('werewolf');
     expect(view(h.game, 4).players[3].icon).toBeNull();
+  });
+
+  it('Có thời gian đọc vai: đứng yên đúng introMs rồi mới vào đêm 1', () => {
+    const h = make(['werewolf', 'seer', V, V, V], { intro: true });
+    h.game.start();
+    expect(h.game.phase).toBe('INTRO');
+    expect(view(h.game, 1).phaseEndsAt).not.toBeNull();
+    vi.advanceTimersByTime(DEFAULT_TIMINGS.introMs - 100);
+    expect(h.game.phase).toBe('INTRO');
+    expect(h.cues).toHaveLength(0);
+    vi.advanceTimersByTime(200);
+    expect(h.game.phase).toBe('NIGHT');
+    expect(h.cues.length).toBeGreaterThan(0);
+  });
+
+  it('Không bật đọc vai thì vào thẳng đêm 1', () => {
+    const h = make(['werewolf', 'seer', V, V, V]);
+    h.game.start();
+    expect(h.game.phase).toBe('NIGHT');
   });
 
   it('Thị Trưởng bị biến thành Sói vẫn giữ mũ Thị Trưởng và phiếu x2; Sói thấy thêm biểu tượng Sói', () => {

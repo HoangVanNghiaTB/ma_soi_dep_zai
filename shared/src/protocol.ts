@@ -2,6 +2,7 @@ import type { RoleId } from './roles';
 import type { Timings } from './config';
 
 export type Phase =
+  | 'INTRO'
   | 'NIGHT'
   | 'DAWN'
   | 'DAY_DISCUSS'
@@ -116,6 +117,14 @@ export interface LobbySeat {
   inGame: boolean;
 }
 
+/** Tuỳ chọn của chủ phòng cho ván sau. */
+export interface RoomOptions {
+  /** Có dành thời gian đọc vai trước khi vào đêm đầu không. */
+  intro: boolean;
+  /** Danh sách vai chọn tay; rỗng nghĩa là chia ngẫu nhiên cân bằng. */
+  roles: RoleId[];
+}
+
 export interface RoomState {
   code: string;
   mySeat: number;
@@ -124,6 +133,7 @@ export interface RoomState {
   countdownEndsAt: number | null;
   serverNow: number;
   settings: Timings;
+  options: RoomOptions;
   /** Mình đang ngồi trong ván hay đang chờ ván sau. */
   playing: boolean;
 }
@@ -141,6 +151,7 @@ export const EV = {
   roomKick: 'room:kick',
   roomKicked: 'room:kicked',
   roomSettings: 'room:settings',
+  roomOptions: 'room:options',
   seatMove: 'seat:move',
   gameStart: 'game:start',
   gamePause: 'game:pause',

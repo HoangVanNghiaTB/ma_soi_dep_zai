@@ -70,3 +70,8 @@ Một trang web Ma Sói 3D riêng (không còn nằm trong rạp), **thay bộ b
 - Thời lượng `psychic_sleep` đang ước 1,5 giây vì chưa đo.
 - Hình emoji do máy người chơi tự vẽ nên mỗi hệ điều hành ra khác nhau một chút.
 - Hai câu gọi Kẻ Phản Bội trong kịch bản cần nghe lại cho khớp thứ tự gọi mới.
+
+## 6. Bổ sung sau
+
+- **Chọn vai ở bàn chờ:** chỉ chủ phòng chọn, bằng nút − / + cho từng vai. Phải chọn đủ bằng số người đang ngồi, có ít nhất một Sói và một người ngoài phe Sói; vai được xáo ngẫu nhiên cho từng người. Xoá hết thì máy tự chia cân bằng như cũ.
+- **Thời gian đọc vai đầu ván:** mặc định 20 giây (chỉnh 5–60 giây), chủ phòng bật hoặc tắt được. Thẻ bài tự mở chi tiết trong lúc đọc, hết giờ mới vào đêm 1.

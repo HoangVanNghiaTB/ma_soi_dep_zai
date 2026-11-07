@@ -1,6 +1,7 @@
 import { DEFAULT_TIMINGS, EDITABLE_TIMINGS, EV, MAX_SEATS, ROLES } from '@ms/shared';
-import type { ChatMsg, Cue, Fx, LobbySeat, RoleId, RoomState, Timings } from '@ms/shared';
+import type { ChatMsg, Cue, Fx, LobbySeat, RoleId, RoomOptions, RoomState, Timings } from '@ms/shared';
 import { Game } from '../game/game';
+import { shuffle } from '../game/deal';
 
 export type Emit = (socketId: string, event: string, payload: unknown) => void;
 
@@ -27,6 +28,20 @@ function debugRoles(n: number): RoleId[] | undefined {
   return list.length === n && list.every((r) => r in ROLES) ? (list as RoleId[]) : undefined;
 }
 
+/** Số lá tối đa của mỗi vai khi chủ phòng chọn tay. */
+function maxCopies(r: RoleId): number {
+  return r === 'villager' ? MAX_SEATS : r === 'werewolf' ? 3 : 1;
+}
+
+/** Kiểm tra danh sách vai chọn tay; trả về lời báo lỗi hoặc null nếu hợp lệ. */
+export function checkRoleList(roles: RoleId[]): string | null {
+  if (roles.length === 0) return null;
+  const wolves = roles.filter((r) => ROLES[r].faction === 'wolf' && r !== 'traitor').length;
+  if (wolves === 0) return 'Cần ít nhất một Sói (Ma Sói, Sói Con, Sói Đầu Đàn hoặc Sói Trắng).';
+  if (!roles.some((r) => ROLES[r].faction !== 'wolf')) return 'Cần có người không thuộc phe Sói.';
+  return null;
+}
+
 export type JoinResult = { ok: true; seat: number } | { ok: false; error: string };
 
 /** Ghế chờ: nếu mất kết nối ở bàn chờ quá lâu thì nhường ghế. */
@@ -38,6 +53,7 @@ export class Room {
   seats: (SeatInfo | null)[] = Array(MAX_SEATS).fill(null);
   hostSession: string | null = null;
   game: Game | null = null;
+  options: RoomOptions = { intro: true, roles: [] };
   countdownEndsAt: number | null = null;
 
   private countdownTimer: ReturnType<typeof setTimeout> | null = null;
@@ -209,6 +225,27 @@ export class Room {
     return null;
   }
 
+  /** Chủ phòng bật/tắt thời gian đọc vai và chọn vai cho ván sau. */
+  updateOptions(sessionId: string, patch: { intro?: unknown; roles?: unknown }): string | null {
+    if (this.hostSession !== sessionId) return 'Chỉ chủ phòng mới chỉnh được.';
+    if (this.status !== 'LOBBY') return 'Chỉ chỉnh được khi chưa bắt đầu ván.';
+    if (typeof patch.intro === 'boolean') this.options.intro = patch.intro;
+    if (patch.roles !== undefined) {
+      const list = patch.roles;
+      if (!Array.isArray(list) || list.length > MAX_SEATS) return 'Danh sách vai không hợp lệ.';
+      if (!list.every((r) => typeof r === 'string' && r in ROLES)) return 'Danh sách vai không hợp lệ.';
+      const roles = list as RoleId[];
+      for (const r of new Set(roles)) {
+        if (roles.filter((x) => x === r).length > maxCopies(r)) {
+          return `Vai ${ROLES[r].name} chỉ được chọn tối đa ${maxCopies(r)} lá.`;
+        }
+      }
+      this.options.roles = roles;
+    }
+    this.broadcast();
+    return null;
+  }
+
   pause(sessionId: string): void {
     if (this.hostSession !== sessionId || !this.game) return;
     this.game.pause();
@@ -238,6 +275,8 @@ export class Room {
     if (n < this.settings.minPlayers) {
       return `Cần ít nhất ${this.settings.minPlayers} người để bắt đầu.`;
     }
+    const bad = this.roleProblem(n);
+    if (bad) return bad;
     if (n >= this.settings.maxPlayers) {
       this.startGame();
       return null;
@@ -248,10 +287,18 @@ export class Room {
     return null;
   }
 
+  /** Lý do không bắt đầu được nếu vai chọn tay không khớp số người. */
+  private roleProblem(n: number): string | null {
+    const roles = this.options.roles;
+    if (roles.length === 0) return null;
+    if (roles.length !== n) return `Bạn đã chọn ${roles.length} vai nhưng đang có ${n} người. Hãy chọn đủ ${n} vai hoặc xoá hết để chia ngẫu nhiên.`;
+    return checkRoleList(roles);
+  }
+
   private finishCountdown(): void {
     this.countdownTimer = null;
     this.countdownEndsAt = null;
-    if (this.seated().length < this.settings.minPlayers) {
+    if (this.seated().length < this.settings.minPlayers || this.roleProblem(this.seated().length)) {
       this.broadcast();
       return;
     }
@@ -273,7 +320,8 @@ export class Room {
       idxs.map((i) => ({ sessionId: this.seats[i]!.sessionId, name: this.seats[i]!.name })),
       {
         timings: this.settings,
-        roles: debugRoles(idxs.length),
+        roles: debugRoles(idxs.length) ?? (this.options.roles.length === idxs.length ? shuffle(this.options.roles) : undefined),
+        intro: this.options.intro,
         onChange: () => this.broadcastGame(),
         onCue: (cue) => this.broadcastCue(cue),
         onFx: (fx, audience) => this.sendToGameSeats(audience, EV.gameFx, fx),
@@ -335,6 +383,7 @@ export class Room {
       countdownEndsAt: this.countdownEndsAt,
       serverNow: Date.now(),
       settings: this.settings,
+      options: this.options,
       playing: s.inGame && !s.left,
     };
   }

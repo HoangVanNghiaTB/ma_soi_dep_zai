@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FACTION_NAMES, ROLES, ROLE_IDS, cardLabel } from '@ms/shared';
 import type { Faction, RoleDef, RoleId } from '@ms/shared';
 import { ICON_EMOJI, THEME_COLOR, themeOf } from '../icons';
@@ -33,12 +33,18 @@ function RoleBody({ role }: { role: RoleDef }) {
  * Thẻ bài Ma Sói theo mẫu: nền kem, viền màu theo phe, hàng đầu ghi "MA SÓI" và điểm,
  * hình emoji lớn, tên vai, nhãn phe và tác dụng ngắn gọn. Chạm vào thẻ để xem chi tiết.
  */
-export function RoleCard({ roleId }: { roleId: RoleId }) {
+export function RoleCard({ roleId, intro = false }: { roleId: RoleId; intro?: boolean }) {
   const role = ROLES[roleId];
   const theme = themeOf(roleId);
   const color = THEME_COLOR[theme];
   const [detail, setDetail] = useState(false);
   const [down, setDown] = useState(false);
+
+  // Đầu ván: tự mở chi tiết để đọc, hết giờ đọc thì tự đóng.
+  useEffect(() => {
+    setDetail(intro);
+    if (intro) setDown(false);
+  }, [intro]);
 
   return (
     <>
@@ -81,6 +87,7 @@ export function RoleCard({ roleId }: { roleId: RoleId }) {
             <div className="detail">
               <RoleBody role={role} />
             </div>
+            {intro && <small className="muted">Tự đóng khi hết thời gian đọc vai</small>}
             <button className="btn" onClick={() => setDetail(false)}>
               Đóng
             </button>

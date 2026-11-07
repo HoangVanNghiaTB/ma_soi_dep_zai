@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import { EV } from '@ms/shared';
-import type { Ack, ChatMsg, Cue, Fx, GameView, RoomState } from '@ms/shared';
+import type { Ack, ChatMsg, Cue, Fx, GameView, RoleId, RoomState } from '@ms/shared';
 import { playCue, preloadAudio } from '../audio/audio';
 import { getState, setState } from '../state/store';
 
@@ -165,6 +165,11 @@ export async function kickSeat(seat: number): Promise<string | null> {
 
 export async function updateSettings(patch: Record<string, number>): Promise<string | null> {
   const a = await request(EV.roomSettings, patch);
+  return a.ok ? null : (a.error ?? 'Không chỉnh được.');
+}
+
+export async function updateOptions(patch: { intro?: boolean; roles?: RoleId[] }): Promise<string | null> {
+  const a = await request(EV.roomOptions, patch);
   return a.ok ? null : (a.error ?? 'Không chỉnh được.');
 }
 

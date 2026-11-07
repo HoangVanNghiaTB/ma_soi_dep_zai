@@ -159,6 +159,14 @@ export function attachSockets(io: Server): RoomManager {
       respond(cb, err ? { ok: false, error: err } : { ok: true });
     });
 
+    socket.on(EV.roomOptions, (p: { intro?: unknown; roles?: unknown }, cb) => {
+      if (!allow()) return;
+      const room = roomOf();
+      if (!room || !data.sessionId) return respond(cb, { ok: false });
+      const err = room.updateOptions(data.sessionId, p ?? {});
+      respond(cb, err ? { ok: false, error: err } : { ok: true });
+    });
+
     socket.on(EV.gameSkipDiscuss, () => {
       if (!allow()) return;
       const g = gameSeat();

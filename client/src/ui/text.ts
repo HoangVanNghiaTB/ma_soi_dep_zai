@@ -2,6 +2,8 @@ import type { GameView, Winner } from '@ms/shared';
 
 export function phaseTitle(v: GameView): string {
   switch (v.phase) {
+    case 'INTRO':
+      return 'Đọc vai của bạn';
     case 'NIGHT':
       return `Đêm ${v.night}`;
     case 'DAWN':
@@ -68,6 +70,8 @@ export function hintText(v: GameView): string {
   if (v.phase === 'HUNTER') return 'Thợ Săn đang chọn người bắn…';
   if (!v.me.alive && v.phase !== 'END') return 'Bạn đã chết, hãy im lặng tới hết ván';
   switch (v.phase) {
+    case 'INTRO':
+      return 'Hãy đọc kỹ chức năng vai của mình';
     case 'NIGHT':
       return v.awake ? '' : 'Trời tối, hãy nhắm mắt…';
     case 'DAY_DISCUSS':

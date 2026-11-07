@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { EDITABLE_TIMINGS } from '@ms/shared';
+import { EDITABLE_TIMINGS, ROLES, ROLE_IDS } from '@ms/shared';
+import type { RoleId } from '@ms/shared';
+import { Emoji } from './RoleCard';
 import { unlockAudio } from '../audio/audio';
-import { kickSeat, leaveRoom, moveSeat, startGame, updateSettings } from '../net/socket';
+import { kickSeat, leaveRoom, moveSeat, startGame, updateOptions, updateSettings } from '../net/socket';
 import { useStore } from '../state/store';
 import { secondsLeft, useServerNow } from './hooks';
 
@@ -11,6 +13,7 @@ export function Lobby() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showRoles, setShowRoles] = useState(false);
   if (!room) return null;
 
   const me = room.seats[room.mySeat];
@@ -48,6 +51,35 @@ export function Lobby() {
     setError(null);
     const err = await updateSettings({ [key]: seconds });
     if (err) setError(err);
+  }
+
+  const chosen = room.options.roles;
+  const copies = (r: RoleId) => chosen.filter((x) => x === r).length;
+  const total = chosen.reduce((sum, r) => sum + ROLES[r].balance, 0);
+  const unbalanced = chosen.length > 0 && (total < -3 || total > 3);
+  const totalText = total > 0 ? `+${total}` : String(total);
+  const maxOf = (r: RoleId) => (r === 'villager' ? 10 : r === 'werewolf' ? 3 : 1);
+
+  async function setRoles(roles: RoleId[]) {
+    setError(null);
+    const err = await updateOptions({ roles });
+    if (err) setError(err);
+  }
+
+  async function toggleIntro(on: boolean) {
+    setError(null);
+    const err = await updateOptions({ intro: on });
+    if (err) setError(err);
+  }
+
+  function change(r: RoleId, d: number) {
+    if (d > 0) {
+      if (copies(r) >= maxOf(r) || chosen.length >= 10) return;
+      void setRoles([...chosen, r]);
+    } else {
+      const i = chosen.lastIndexOf(r);
+      if (i >= 0) void setRoles(chosen.filter((_, k) => k !== i));
+    }
   }
 
   return (
@@ -100,6 +132,73 @@ export function Lobby() {
         </div>
 
         {left !== null && <div className="countdown">Bắt đầu sau {left}s…</div>}
+
+        <div className="settings">
+          <label className="setting-row">
+            <span>Thời gian đọc vai đầu ván ({Math.round(room.settings.introMs / 1000)}s)</span>
+            <input
+              type="checkbox"
+              checked={room.options.intro}
+              disabled={!isHost || !inLobby}
+              onChange={(e) => void toggleIntro(e.target.checked)}
+            />
+          </label>
+        </div>
+
+        <button className="btn ghost small" onClick={() => setShowRoles((v) => !v)}>
+          {chosen.length === 0
+            ? 'Vai trong ván: chia ngẫu nhiên'
+            : `Vai trong ván: đã chọn ${chosen.length}/${count}`}
+          {showRoles ? ' ▲' : ' ▼'}
+        </button>
+        {chosen.length > 0 && (
+          <div className={unbalanced ? 'error' : 'muted small center'}>
+            {unbalanced
+              ? `⚠️ Tổng điểm cân bằng ${totalText}, nằm ngoài khoảng −3 đến +3: ván sẽ lệch về một phe. Vẫn bắt đầu được nếu bạn muốn.`
+              : `Tổng điểm cân bằng: ${totalText} (hợp lý, trong khoảng −3 đến +3)`}
+          </div>
+        )}
+        {showRoles && (
+          <div className="settings role-pick">
+            {isHost && inLobby ? (
+              <>
+                <div className="muted small">
+                  Chọn đúng {count} vai (bằng số người đang ngồi) hoặc xoá hết để máy tự chia cân bằng. Vai được xáo ngẫu nhiên cho từng người.
+                </div>
+                {ROLE_IDS.map((r) => (
+                  <div key={r} className="setting-row">
+                    <span>
+                      <Emoji role={r} /> {ROLES[r].name}{' '}
+                      <small className="muted">({ROLES[r].balance > 0 ? '+' : ''}{ROLES[r].balance})</small>
+                    </span>
+                    <span className="setting-input">
+                      <button className="btn small ghost" disabled={copies(r) === 0} onClick={() => change(r, -1)}>
+                        −
+                      </button>
+                      <b>{copies(r)}</b>
+                      <button
+                        className="btn small ghost"
+                        disabled={copies(r) >= maxOf(r) || chosen.length >= 10}
+                        onClick={() => change(r, 1)}
+                      >
+                        +
+                      </button>
+                    </span>
+                  </div>
+                ))}
+                <button className="btn small ghost" disabled={chosen.length === 0} onClick={() => void setRoles([])}>
+                  Xoá hết (chia ngẫu nhiên)
+                </button>
+              </>
+            ) : (
+              <div className="muted small">
+                {chosen.length === 0
+                  ? 'Chủ phòng chưa chọn vai, máy sẽ tự chia.'
+                  : 'Vai trong ván: ' + chosen.map((r) => ROLES[r].name).join(', ')}
+              </div>
+            )}
+          </div>
+        )}
 
         <button className="btn ghost small" onClick={() => setShowSettings((v) => !v)}>
           {showSettings ? 'Ẩn thời gian' : 'Xem / chỉnh thời gian'}

@@ -19,6 +19,8 @@ export interface Timings {
   minRealPlayers: number;
   /** Nghỉ sau "Trời tối rồi" cho mọi người kịp nhắm mắt. */
   startPauseMs: number;
+  /** Thời gian đọc vai ở đầu ván (nếu chủ phòng bật). */
+  introMs: number;
   /** Nghỉ sau lời gọi dậy, trước khi mở khung thao tác. */
   cueGapMs: number;
   /** Nghỉ sau lời gọi ngủ, trước vai kế tiếp. */
@@ -48,6 +50,7 @@ export const DEFAULT_TIMINGS: Timings = {
   countdownMs: 15_000,
   minRealPlayers: 3,
   startPauseMs: 1_500,
+  introMs: 20_000,
   cueGapMs: 600,
   sleepGapMs: 800,
   windows: {
@@ -82,5 +85,6 @@ export const EDITABLE_TIMINGS: { key: keyof Timings; label: string; min: number;
   { key: 'skipDiscussAfterMs', label: 'Hiện nút "Bỏ qua thảo luận" sau', min: 10, max: 600 },
   { key: 'voteMs', label: 'Bỏ phiếu', min: 10, max: 120 },
   { key: 'hunterMs', label: 'Thợ Săn chọn người bắn', min: 5, max: 60 },
+  { key: 'introMs', label: 'Thời gian đọc vai đầu ván', min: 5, max: 60 },
   { key: 'countdownMs', label: 'Đếm ngược bắt đầu', min: 5, max: 60 },
 ];
