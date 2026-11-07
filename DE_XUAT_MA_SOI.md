@@ -101,7 +101,7 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
 |---|---|---|
 | Ma Sói | −6 | Cùng bầy Sói chọn một người để cắn mỗi đêm. |
 | Sói Con | −8 | Khi bị loại, bầy Sói được cắn thêm một người vào đêm kế tiếp. |
-| Sói Đầu Đàn | −9 | Từ đêm 2, một lần trong ván, biến người bị cắn thành Sói thay vì giết. Chỉ biến được khi Bảo Vệ không che người đó và sau khi biến số Sói vẫn ít hơn số người còn lại. Người bị biến đổi biểu tượng thành Sói, thấy bầy Sói và vào chat Sói. |
+| Sói Đầu Đàn | −9 | Từ đêm 2, một lần trong ván, biến người bị cắn thành Sói thay vì giết. Chỉ biến được khi Bảo Vệ không che người đó và sau khi biến số Sói vẫn ít hơn số người còn lại. Người bị biến đổi biểu tượng thành Sói, thấy bầy Sói và vào chat Sói. Nếu người bị biến là Thị Trưởng thì vẫn giữ mũ Thị Trưởng trên đầu và phiếu tính hai (người ngoài không thấy gì thay đổi). |
 | Kẻ Phản Bội | −6 | Chỉ đêm đầu, được gọi dậy ngay sau bầy Sói để nhận ra các Sói, không thao tác được. Giúp Sói thắng, nhưng Sói không biết nó. Tiên Tri soi ra là người. |
 
 **Phe thứ ba (2 vai)**

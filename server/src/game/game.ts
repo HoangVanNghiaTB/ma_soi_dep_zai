@@ -50,6 +50,8 @@ interface P {
   connected: boolean;
   lover: number | null;
   princeUsed: boolean;
+  /** Thị Trưởng từ đầu ván. Giữ nguyên biểu tượng và phiếu x2 kể cả khi bị Sói Đầu Đàn biến thành Sói. */
+  isMayor: boolean;
 }
 
 type StepId =
@@ -190,6 +192,7 @@ export class Game {
       connected: true,
       lover: null,
       princeUsed: false,
+      isMayor: roles[i] === 'mayor',
     }));
     this.dealt = new Set(roles);
   }
@@ -667,7 +670,7 @@ export class Game {
     const count = new Map<number, number>();
     for (const [voter, v] of this.votes) {
       if (v === 'skip') continue;
-      const weight = this.players[voter].role === 'mayor' ? 2 : 1;
+      const weight = this.players[voter].isMayor ? 2 : 1;
       count.set(v, (count.get(v) ?? 0) + weight);
     }
     let hanged: number | null = null;
@@ -1061,16 +1064,19 @@ export class Game {
       if (ended) icon = p.alive ? p.role : 'tomb';
       else if (!p.alive) icon = 'tomb';
       else if (p.seat === seat) icon = p.role;
-      else if (p.role === 'mayor') icon = 'mayor';
-      else if (p.role === 'prince' && p.princeUsed) icon = 'prince';
       else if ((mePack || meTraitor) && isPack(p.role)) icon = 'wolf';
+      else if (p.isMayor) icon = 'mayor';
+      else if (p.role === 'prince' && p.princeUsed) icon = 'prince';
 
       let count: number | null = null;
       if (showVotes) count = voteCount.get(p.seat) ?? 0;
       else if (showBites) count = biteCount.get(p.seat) ?? 0;
 
-      const mark: IconId | null =
-        p.alive && me.lover === p.seat && me.alive ? 'heart' : null;
+      // Biểu tượng phụ: trái tim cặp đôi; hoặc mũ Thị Trưởng khi icon chính đang là biểu tượng khác
+      // (Thị Trưởng bị biến thành Sói: người ngoài vẫn thấy mũ, Sói thấy cả biểu tượng Sói lẫn mũ).
+      let mark: IconId | null = null;
+      if (p.alive && me.alive && me.lover === p.seat && p.seat !== seat) mark = 'heart';
+      else if (p.alive && p.isMayor && icon !== 'mayor') mark = 'mayor';
 
       return {
         seat: p.seat,

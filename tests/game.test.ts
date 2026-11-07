@@ -526,6 +526,34 @@ describe('phe Sói', () => {
     expect(view(h.game, 4).players[3].icon).toBeNull();
   });
 
+  it('Thị Trưởng bị biến thành Sói vẫn giữ mũ Thị Trưởng và phiếu x2; Sói thấy thêm biểu tượng Sói', () => {
+    const h = make(['alpha', 'werewolf', 'mayor', V, V, V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    passDay(h.game);
+
+    doAct(h.game, 0, 'bite', [2]);
+    doAct(h.game, 0, 'convert', []);
+    toDay(h.game);
+
+    expect(h.game.players[2].role).toBe('werewolf');
+    // Người ngoài (Dân): vẫn thấy mũ Thị Trưởng như cũ, không lộ gì cả.
+    expect(view(h.game, 4).players[2].icon).toBe('mayor');
+    expect(view(h.game, 4).players[2].mark).toBeNull();
+    // Sói: thấy biểu tượng Sói và vẫn thấy mũ.
+    expect(view(h.game, 1).players[2].icon).toBe('wolf');
+    expect(view(h.game, 1).players[2].mark).toBe('mayor');
+    // Chính Thị Trưởng: thấy vai mới của mình và mũ.
+    expect(view(h.game, 2).players[2].icon).toBe('werewolf');
+    expect(view(h.game, 2).players[2].mark).toBe('mayor');
+
+    // Phiếu vẫn tính hai: P2 (2 phiếu) thắng P3 (1 phiếu).
+    vote(h.game, { 2: 5, 4: 6 });
+    run(h.game, () => h.game.phase === 'EXECUTION');
+    expect(h.game.players[5].alive).toBe(false);
+    expect(h.game.players[6].alive).toBe(true);
+  });
+
   it('Sói Đầu Đàn không biến được nếu Bảo Vệ che người đó', () => {
     const h = make(['alpha', 'werewolf', 'guard', V, V, V, V]);
     h.game.start();
@@ -755,7 +783,7 @@ function botGame(n: number, seed: number): void {
             o.icon === null ||
             o.icon === 'tomb' ||
             (o.icon === 'wolf' && ['werewolf', 'cub', 'alpha', 'whitewolf'].includes(real)) ||
-            (o.icon === 'mayor' && real === 'mayor') ||
+            (o.icon === 'mayor' && game.players[o.seat].isMayor) ||
             (o.icon === 'prince' && real === 'prince');
           if (!ok) throw new Error(`lộ vai: ghế ${p.seat} thấy ghế ${o.seat} là ${o.icon} (thật: ${real})`);
         }
