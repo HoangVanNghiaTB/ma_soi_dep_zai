@@ -125,7 +125,7 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
    - Số người phe Sói (Ma Sói, Sói Con, Sói Đầu Đàn, Kẻ Phản Bội): **2** khi N = 6 hoặc 7, **3** khi N từ 8 đến 10. Luôn có ít nhất một **Sói thật** (không chỉ Kẻ Phản Bội).
    - Ma Sói tối đa 3 lá. Dân làng không giới hạn. Các vai còn lại mỗi vai tối đa **một** lá.
    - **Phe thứ ba** chỉ xuất hiện khi N ≥ 8, mỗi ván tối đa **một** vai phe thứ ba.
-   - Phù Thủy Sói được rút như một chỗ của phe Sói (cùng Kẻ Phản Bội). Tiên Tri Nữ chỉ có khi N ≥ 10. Các vai mới (Kẻ Ngốc, Người Yêu Hoà Bình, Người Mang Dáng Sói, Thầy Đồng, Thám Tử Ngoại Cảm) rút như các vai đặc biệt khác.
+   - Phù Thủy Sói được rút như một chỗ của phe Sói (cùng Kẻ Phản Bội), và **chỉ ra khi ván có Tiên Tri hoặc Tiên Tri Nữ** (có Tiên Tri thì không bắt buộc có Phù Thủy Sói). Tiên Tri Nữ chỉ có khi N ≥ 10. Các vai mới (Kẻ Ngốc, Người Yêu Hoà Bình, Người Mang Dáng Sói, Thầy Đồng, Thám Tử Ngoại Cảm) rút như các vai đặc biệt khác.
 2. **Cộng điểm cân bằng** các lá vừa rút. Tổng nằm trong **−3 đến +3** thì dùng, không thì rút lại (thử tối đa vài trăm lần).
 3. Không ra đội hình hợp lệ (hiếm) thì dùng **đội hình mẫu** dưới đây rồi xáo ngẫu nhiên cho từng người.
 

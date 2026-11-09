@@ -89,6 +89,25 @@ describe('dealRoles', () => {
     expect(sawCub).toBeGreaterThan(0);
   });
 
+  it('Phù Thủy Sói chỉ ra khi có Tiên Tri (hoặc Tiên Tri Nữ); có Tiên Tri thì không bắt buộc có Phù Thủy Sói', () => {
+    let withSorceress = 0;
+    let seerNoSorceress = 0;
+    for (let n = 5; n <= 15; n++) {
+      for (let k = 0; k < 500; k++) {
+        const roles = dealRoles(n);
+        const hasSeer = roles.includes('seer') || roles.includes('seeress');
+        if (roles.includes('sorceress')) {
+          withSorceress++;
+          expect(hasSeer).toBe(true);
+        } else if (hasSeer) {
+          seerNoSorceress++;
+        }
+      }
+    }
+    expect(withSorceress).toBeGreaterThan(0);
+    expect(seerNoSorceress).toBeGreaterThan(0);
+  });
+
   it('đội hình mẫu đều hợp lệ về điểm', () => {
     for (const [n, roles] of Object.entries(FALLBACK)) {
       expect(roles).toHaveLength(Number(n));

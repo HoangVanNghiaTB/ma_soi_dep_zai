@@ -33,6 +33,10 @@ const VILLAGE_SPECIAL: RoleId[] = [
 const cubAlone = (roles: readonly RoleId[]): boolean =>
   roles.includes('cub') && roles.filter(isWolfKind).length < 2;
 
+/** Phù Thủy Sói chỉ có ý nghĩa khi có Tiên Tri để tìm: ván có cô thì bắt buộc có Tiên Tri hoặc Tiên Tri Nữ. */
+const sorceressNoSeer = (roles: readonly RoleId[]): boolean =>
+  roles.includes('sorceress') && !roles.includes('seer') && !roles.includes('seeress');
+
 const TRUE_WOLVES: RoleId[] = ['werewolf', 'cub', 'alpha'];
 const WOLF_PICKS: RoleId[] = ['werewolf', 'werewolf', 'cub', 'alpha', 'traitor', 'sorceress'];
 
@@ -63,7 +67,7 @@ function dealSmall(rng: Rng): RoleId[] {
   for (let tries = 0; tries < 5000; tries++) {
     const roles = shuffle(deck, rng).slice(0, 5);
     const s = balanceOf(roles);
-    if (s >= BALANCE.min && s <= BALANCE.max && roles.some(isWolfKind) && !cubAlone(roles)) return roles;
+    if (s >= BALANCE.min && s <= BALANCE.max && roles.some(isWolfKind) && !cubAlone(roles) && !sorceressNoSeer(roles)) return roles;
   }
   return shuffle(FALLBACK[5], rng);
 }
@@ -100,7 +104,7 @@ export function dealRoles(n: number, rng: Rng = Math.random): RoleId[] {
     const roles: RoleId[] = [...wolves, ...(third ? [third] : []), ...special];
     while (roles.length < size) roles.push('villager');
     const s = balanceOf(roles);
-    if (s >= BALANCE.min && s <= BALANCE.max && !cubAlone(roles)) return shuffle(roles, rng);
+    if (s >= BALANCE.min && s <= BALANCE.max && !cubAlone(roles) && !sorceressNoSeer(roles)) return shuffle(roles, rng);
   }
   const fb = FALLBACK[size] ?? FALLBACK[5];
   // Bàn lớn hơn 15 hoặc nhỏ hơn 5 không có trong luật: bù thêm Dân làng cho đủ người.

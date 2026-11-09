@@ -162,9 +162,10 @@ export function Lobby() {
 
         {left !== null && <div className="countdown">Bắt đầu sau {left}s…</div>}
 
-        <div className="settings">
+        <div className="lobby-opts">
+        <div className="settings opt-intro">
           <label className="setting-row">
-            <span>Thời gian đọc vai đầu ván ({Math.round(room.settings.introMs / 1000)}s)</span>
+            <span>Đọc vai đầu ván ({Math.round(room.settings.introMs / 1000)}s)</span>
             <input
               type="checkbox"
               checked={room.options.intro}
@@ -176,10 +177,14 @@ export function Lobby() {
 
         <button className="btn ghost small" onClick={() => setShowRoles((v) => !v)}>
           {chosen.length === 0
-            ? 'Vai trong ván: chia ngẫu nhiên'
-            : `Vai trong ván: đã chọn ${chosen.length}/${count}`}
+            ? 'Vai: ngẫu nhiên'
+            : `Vai: đã chọn ${chosen.length}/${count}`}
           {showRoles ? ' ▲' : ' ▼'}
         </button>
+        <button className="btn ghost small" onClick={() => setShowSettings((v) => !v)}>
+          {showSettings ? 'Ẩn thời gian' : 'Chỉnh thời gian'}
+        </button>
+        </div>
         {chosen.length > 0 && (
           <div className={unbalanced ? 'error' : 'muted small center'}>
             {unbalanced
@@ -229,9 +234,6 @@ export function Lobby() {
           </div>
         )}
 
-        <button className="btn ghost small" onClick={() => setShowSettings((v) => !v)}>
-          {showSettings ? 'Ẩn thời gian' : 'Xem / chỉnh thời gian'}
-        </button>
         {showSettings && (
           <div className="settings">
             {EDITABLE_TIMINGS.map((f) => {
@@ -271,12 +273,13 @@ export function Lobby() {
 
         {error && <div className="error">{error}</div>}
 
-        <GuideButton onOpen={() => setGuide(true)} />
+        <div className="lobby-foot">
+          <GuideButton onOpen={() => setGuide(true)} />
+          <button className="btn ghost small" onClick={leaveRoom}>
+            Rời phòng
+          </button>
+        </div>
         {guide && <HowToPlay onClose={() => setGuide(false)} />}
-
-        <button className="btn ghost" onClick={leaveRoom}>
-          Rời phòng
-        </button>
       </div>
     </div>
   );
