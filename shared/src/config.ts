@@ -44,6 +44,9 @@ export interface Timings {
 
 export const MAX_SEATS = 10;
 
+/** Số ghế xem (chỉ nghe quản trò, không chơi). */
+export const MAX_WATCH = 2;
+
 export const DEFAULT_TIMINGS: Timings = {
   minPlayers: 5,
   maxPlayers: 10,

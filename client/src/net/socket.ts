@@ -173,6 +173,11 @@ export async function updateOptions(patch: { intro?: boolean; roles?: RoleId[] }
   return a.ok ? null : (a.error ?? 'Không chỉnh được.');
 }
 
+/** Ngồi vào ghế xem: máy này chỉ phát lời quản trò, không chơi. */
+export function watchSeat(slot: number): void {
+  socket.emit(EV.seatWatch, { slot });
+}
+
 export function moveSeat(seat: number): void {
   socket.emit(EV.seatMove, { seat });
 }

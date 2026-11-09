@@ -88,6 +88,12 @@ export function attachSockets(io: Server): RoomManager {
       if (room && data.sessionId && isInt(p?.seat)) room.moveSeat(data.sessionId, p.seat);
     });
 
+    socket.on(EV.seatWatch, (p: { slot?: unknown }) => {
+      if (!allow()) return;
+      const room = roomOf();
+      if (room && data.sessionId && isInt(p?.slot)) room.moveToWatch(data.sessionId, p.slot);
+    });
+
     socket.on(EV.gameStart, (_p, cb) => {
       if (!allow()) return;
       const room = roomOf();

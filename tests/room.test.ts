@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
+import { EV } from '@ms/shared';
 import { Room, checkRoleList } from '../server/src/rooms/room';
 
-function makeRoom(n: number): Room {
-  const room = new Room('ABCD', () => {}, () => {});
+function makeRoom(n: number, emit: (id: string, ev: string, p: unknown) => void = () => {}): Room {
+  const room = new Room('ABCD', emit, () => {});
   for (let i = 0; i < n; i++) room.join(`s${i}`, `P${i}`, `sock${i}`);
   return room;
 }
@@ -52,5 +53,54 @@ describe('chọn vai ở bàn chờ', () => {
     expect(room.game!.players.map((p) => p.role).sort()).toEqual([...want].sort());
     room.dispose();
     vi.useRealTimers();
+  });
+});
+
+describe('ghế xem', () => {
+  it('chuyển sang ghế xem: không tính là người chơi, chủ phòng không chuyển được', () => {
+    const room = makeRoom(5);
+    room.moveToWatch('s0', 0);
+    expect(room.watchers[0]).toBeNull();
+    room.moveToWatch('s3', 0);
+    room.moveToWatch('s4', 1);
+    room.moveToWatch('s2', 0);
+    expect(room.watchers.map((w) => w?.sessionId)).toEqual(['s3', 's4']);
+    expect(room.seats.filter(Boolean)).toHaveLength(3);
+    // Còn 3 người chơi nên chưa đủ để bắt đầu.
+    expect(room.requestStart('s0')).toMatch(/ít nhất/);
+    room.dispose();
+  });
+
+  it('ghế xem nhận lời quản trò, ghế chơi đầy thì người mới vào ghế xem', () => {
+    const got: string[] = [];
+    const room = makeRoom(10, (id, ev) => {
+      if (ev === EV.gameCue) got.push(id);
+    });
+    expect(room.join('w1', 'Loa', 'sockw1')).toEqual({ ok: true, seat: -1 });
+    expect(room.watchers[0]?.sessionId).toBe('w1');
+    expect(room.join('w2', 'Loa2', 'sockw2').ok).toBe(true);
+    expect(room.join('w3', 'Thừa', 'sockw3').ok).toBe(false);
+
+    vi.useFakeTimers();
+    expect(room.requestStart('s0')).toBeNull();
+    expect(room.game).not.toBeNull();
+    // Mọi cue của ván cũng tới ghế xem.
+    vi.advanceTimersByTime(room.settings.introMs + 5000);
+    expect(got).toContain('sockw1');
+    expect(got).toContain('sockw2');
+    room.dispose();
+    vi.useRealTimers();
+  });
+
+  it('chủ phòng mời được người ở ghế xem; từ ghế xem về ghế chơi', () => {
+    const room = makeRoom(5);
+    room.moveToWatch('s4', 0);
+    room.moveSeat('s4', 7);
+    expect(room.watchers[0]).toBeNull();
+    expect(room.seats[7]?.sessionId).toBe('s4');
+    room.moveToWatch('s4', 1);
+    expect(room.kick('s0', 10 + 1)).toBeNull();
+    expect(room.watchers[1]).toBeNull();
+    room.dispose();
   });
 });

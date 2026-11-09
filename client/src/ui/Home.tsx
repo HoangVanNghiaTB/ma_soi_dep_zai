@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { unlockAudio } from '../audio/audio';
+import { GuideButton, HowToPlay } from './HowToPlay';
 import { createRoom, joinRoom } from '../net/socket';
 import { useStore } from '../state/store';
 
@@ -17,6 +18,7 @@ export function Home() {
   const [name, setName] = useState(loadName);
   const [code, setCode] = useState(() => new URLSearchParams(location.search).get('room') ?? '');
   const [error, setError] = useState<string | null>(null);
+  const [guide, setGuide] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const cleanName = name.trim();
@@ -81,6 +83,8 @@ export function Home() {
 
         {(error ?? kickedMsg) && <div className="error">{error ?? kickedMsg}</div>}
         {!connected && <div className="muted small">Đang kết nối tới server…</div>}
+        <GuideButton onOpen={() => setGuide(true)} />
+        {guide && <HowToPlay onClose={() => setGuide(false)} />}
       </div>
     </div>
   );

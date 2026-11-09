@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { EDITABLE_TIMINGS, ROLES, ROLE_IDS } from '@ms/shared';
+import { EDITABLE_TIMINGS, MAX_SEATS, ROLES, ROLE_IDS } from '@ms/shared';
 import type { RoleId } from '@ms/shared';
+import { GuideButton, HowToPlay } from './HowToPlay';
 import { Emoji } from './RoleCard';
 import { unlockAudio } from '../audio/audio';
-import { kickSeat, leaveRoom, moveSeat, startGame, updateOptions, updateSettings } from '../net/socket';
+import { kickSeat, leaveRoom, moveSeat, startGame, updateOptions, updateSettings, watchSeat } from '../net/socket';
 import { useStore } from '../state/store';
 import { secondsLeft, useServerNow } from './hooks';
 
@@ -14,6 +15,7 @@ export function Lobby() {
   const [copied, setCopied] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showRoles, setShowRoles] = useState(false);
+  const [guide, setGuide] = useState(false);
   if (!room) return null;
 
   const me = room.seats[room.mySeat];
@@ -125,6 +127,32 @@ export function Lobby() {
               </div>
             );
           })}
+        </div>
+
+        <div className="watch-row">
+          <span className="muted small">Ghế xem (máy phát loa lời quản trò, không chơi):</span>
+          {room.watchSeats.map((w, i) =>
+            w ? (
+              <span key={i} className={`seat taken${w.connected ? '' : ' off'}`}>
+                <span className="seat-name">🔊 {w.name}</span>
+                {isHost && inLobby && (
+                  <button className="kick" title="Mời ra khỏi phòng" onClick={() => kick(MAX_SEATS + i)}>
+                    ✕
+                  </button>
+                )}
+              </span>
+            ) : (
+              <button
+                key={i}
+                className="seat empty"
+                disabled={isHost || !!me?.inGame}
+                title={isHost ? 'Chủ phòng cần ngồi ghế chơi' : undefined}
+                onClick={() => watchSeat(i)}
+              >
+                Ghế xem
+              </button>
+            ),
+          )}
         </div>
 
         <div className="muted small center">
@@ -241,6 +269,9 @@ export function Lobby() {
         )}
 
         {error && <div className="error">{error}</div>}
+
+        <GuideButton onOpen={() => setGuide(true)} />
+        {guide && <HowToPlay onClose={() => setGuide(false)} />}
 
         <button className="btn ghost" onClick={leaveRoom}>
           Rời phòng

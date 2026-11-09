@@ -5,6 +5,7 @@ import { GameScreen } from './ui/GameScreen';
 import { Home } from './ui/Home';
 import { Lobby } from './ui/Lobby';
 import { Notice } from './ui/Notice';
+import { WatchScreen } from './ui/WatchScreen';
 
 const SEEN_KEY = 'ms.notice.seen';
 function wasSeen(): boolean {
@@ -84,6 +85,7 @@ export function App() {
       />
     );
   } else if (!room) screen = <Home />;
+  else if (room.myWatch >= 0) screen = <WatchScreen />;
   else if (room.playing && view) screen = <GameScreen view={view} />;
   else screen = <Lobby />;
 

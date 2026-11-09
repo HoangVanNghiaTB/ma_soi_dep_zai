@@ -127,8 +127,13 @@ export interface RoomOptions {
 
 export interface RoomState {
   code: string;
+  /** Ghế chơi của mình, -1 nếu đang ngồi ghế xem. */
   mySeat: number;
   seats: (LobbySeat | null)[];
+  /** Các ghế xem: chỉ nghe quản trò, không chơi. */
+  watchSeats: (LobbySeat | null)[];
+  /** Chỉ số ghế xem của mình, -1 nếu không ngồi ghế xem. */
+  myWatch: number;
   status: 'LOBBY' | 'COUNTDOWN' | 'IN_GAME';
   countdownEndsAt: number | null;
   serverNow: number;
@@ -153,6 +158,7 @@ export const EV = {
   roomSettings: 'room:settings',
   roomOptions: 'room:options',
   seatMove: 'seat:move',
+  seatWatch: 'seat:watch',
   gameStart: 'game:start',
   gamePause: 'game:pause',
   gameResume: 'game:resume',

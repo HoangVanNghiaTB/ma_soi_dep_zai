@@ -100,6 +100,31 @@ export function RoleCard({ roleId, intro = false }: { roleId: RoleId; intro?: bo
 
 const FACTION_ORDER: Faction[] = ['village', 'wolf', 'third'];
 
+/** Cách chơi của cả 15 vai, chia theo phe. */
+export function RolesList() {
+  return (
+    <>
+      {FACTION_ORDER.map((f) => (
+        <section key={f}>
+          <h3 className={f}>{FACTION_NAMES[f]}</h3>
+          {ROLE_IDS.filter((id) => ROLES[id].faction === f).map((id) => {
+            const r = ROLES[id];
+            return (
+              <div key={id} className="guide-role">
+                <Emoji role={id} className="guide-emoji" />
+                <div>
+                  <b>{r.name}</b>
+                  <RoleBody role={r} />
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      ))}
+    </>
+  );
+}
+
 /** Danh sách cách chơi của cả 15 vai, để người mới tra cứu. */
 export function RolesGuide({ onClose }: { onClose: () => void }) {
   return (
@@ -107,23 +132,7 @@ export function RolesGuide({ onClose }: { onClose: () => void }) {
       <div className="modal-card guide" onClick={(e) => e.stopPropagation()}>
         <h2>Cách chơi các vai</h2>
         <div className="guide-scroll">
-          {FACTION_ORDER.map((f) => (
-            <section key={f}>
-              <h3 className={f}>{FACTION_NAMES[f]}</h3>
-              {ROLE_IDS.filter((id) => ROLES[id].faction === f).map((id) => {
-                const r = ROLES[id];
-                return (
-                  <div key={id} className="guide-role">
-                    <Emoji role={id} className="guide-emoji" />
-                    <div>
-                      <b>{r.name}</b>
-                      <RoleBody role={r} />
-                    </div>
-                  </div>
-                );
-              })}
-            </section>
-          ))}
+          <RolesList />
         </div>
         <button className="btn" onClick={onClose}>
           Đóng

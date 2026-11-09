@@ -1,4 +1,4 @@
-import { DEFAULT_TIMINGS, EDITABLE_TIMINGS, EV, MAX_SEATS, ROLES } from '@ms/shared';
+import { DEFAULT_TIMINGS, EDITABLE_TIMINGS, EV, MAX_SEATS, MAX_WATCH, ROLES } from '@ms/shared';
 import type { ChatMsg, Cue, Fx, LobbySeat, RoleId, RoomOptions, RoomState, Timings } from '@ms/shared';
 import { Game } from '../game/game';
 import { shuffle } from '../game/deal';
@@ -51,6 +51,8 @@ export class Room {
   readonly code: string;
   readonly settings: Timings;
   seats: (SeatInfo | null)[] = Array(MAX_SEATS).fill(null);
+  /** Ghế xem: chỉ nghe lời quản trò, không tính là người chơi. */
+  watchers: (SeatInfo | null)[] = Array(MAX_WATCH).fill(null);
   hostSession: string | null = null;
   game: Game | null = null;
   options: RoomOptions = { intro: true, roles: [] };
@@ -75,6 +77,10 @@ export class Room {
     return this.seats.findIndex((s) => s?.sessionId === sessionId);
   }
 
+  watcherOfSession(sessionId: string): number {
+    return this.watchers.findIndex((s) => s?.sessionId === sessionId);
+  }
+
   get status(): RoomState['status'] {
     if (this.game) return 'IN_GAME';
     return this.countdownEndsAt !== null ? 'COUNTDOWN' : 'LOBBY';
@@ -94,6 +100,17 @@ export class Room {
     this.clearEmptyTimer();
     const cleanName = name.trim().slice(0, 16) || 'Người chơi';
 
+    const w = this.watcherOfSession(sessionId);
+    if (w >= 0) {
+      const ws = this.watchers[w]!;
+      ws.socketId = socketId;
+      ws.connected = true;
+      if (ws.graceTimer) clearTimeout(ws.graceTimer);
+      ws.graceTimer = null;
+      this.broadcast();
+      return { ok: true, seat: -1 };
+    }
+
     const existing = this.seatOfSession(sessionId);
     if (existing >= 0) {
       const s = this.seats[existing]!;
@@ -111,24 +128,33 @@ export class Room {
     }
 
     const free = this.seats.findIndex((s) => s === null);
-    if (free < 0) return { ok: false, error: 'Phòng đã đầy.' };
+    if (free < 0) {
+      // Bàn đầy thì vào ghế xem nếu còn.
+      const fw = this.watchers.findIndex((s) => s === null);
+      if (fw < 0) return { ok: false, error: 'Phòng đã đầy.' };
+      this.watchers[fw] = this.newInfo(sessionId, cleanName, socketId);
+      this.broadcast();
+      return { ok: true, seat: -1 };
+    }
 
-    this.seats[free] = {
-      sessionId,
-      name: cleanName,
-      socketId,
-      connected: true,
-      inGame: false,
-      left: false,
-      graceTimer: null,
-    };
+    this.seats[free] = this.newInfo(sessionId, cleanName, socketId);
     if (!this.hostSession) this.hostSession = sessionId;
     this.broadcast();
     return { ok: true, seat: free };
   }
 
+  private newInfo(sessionId: string, name: string, socketId: string): SeatInfo {
+    return { sessionId, name, socketId, connected: true, inGame: false, left: false, graceTimer: null };
+  }
+
   /** Người chơi chủ động rời phòng. */
   leave(sessionId: string): void {
+    const w = this.watcherOfSession(sessionId);
+    if (w >= 0) {
+      this.watchers[w] = null;
+      this.broadcast();
+      return;
+    }
     const idx = this.seatOfSession(sessionId);
     if (idx < 0) return;
     const s = this.seats[idx]!;
@@ -139,6 +165,20 @@ export class Room {
 
   /** Mất kết nối (đóng tab, rớt mạng). */
   disconnect(socketId: string): void {
+    const w = this.watchers.findIndex((s) => s?.socketId === socketId);
+    if (w >= 0) {
+      const ws = this.watchers[w]!;
+      ws.socketId = null;
+      ws.connected = false;
+      ws.graceTimer = setTimeout(() => {
+        if (this.watchers[w] === ws && !ws.connected) {
+          this.watchers[w] = null;
+          this.broadcast();
+        }
+      }, LOBBY_GRACE_MS);
+      this.broadcast();
+      return;
+    }
     const idx = this.seats.findIndex((s) => s?.socketId === socketId);
     if (idx < 0) return;
     const s = this.seats[idx]!;
@@ -201,6 +241,16 @@ export class Room {
   kick(sessionId: string, seat: number): string | null {
     if (this.hostSession !== sessionId) return 'Chỉ chủ phòng mới mời người ra được.';
     if (this.status !== 'LOBBY') return 'Chỉ mời được khi chưa bắt đầu ván.';
+    if (seat >= MAX_SEATS) {
+      const w = seat - MAX_SEATS;
+      const ws = this.watchers[w];
+      if (!ws) return 'Ghế này đang trống.';
+      if (ws.socketId) this.emit(ws.socketId, EV.roomKicked, {});
+      if (ws.graceTimer) clearTimeout(ws.graceTimer);
+      this.watchers[w] = null;
+      this.broadcast();
+      return null;
+    }
     const s = this.seats[seat];
     if (!s) return 'Ghế này đang trống.';
     if (s.sessionId === sessionId) return 'Bạn không thể tự mời mình.';
@@ -256,7 +306,26 @@ export class Room {
     this.game.resume();
   }
 
+  /** Chuyển sang ghế xem (chỉ nghe quản trò). Chủ phòng và người đang chơi dở ván không chuyển được. */
+  moveToWatch(sessionId: string, slot: number): void {
+    if (slot < 0 || slot >= MAX_WATCH || this.watchers[slot] !== null) return;
+    const from = this.seatOfSession(sessionId);
+    if (from < 0 || this.seats[from]!.inGame || this.hostSession === sessionId) return;
+    this.watchers[slot] = this.seats[from];
+    this.seats[from] = null;
+    this.broadcast();
+  }
+
   moveSeat(sessionId: string, to: number): void {
+    // Từ ghế xem về ghế chơi (còn trống) thì được ở mọi lúc, như người mới vào giữa ván.
+    const w = this.watcherOfSession(sessionId);
+    if (w >= 0) {
+      if (to < 0 || to >= MAX_SEATS || this.seats[to] !== null) return;
+      this.seats[to] = this.watchers[w];
+      this.watchers[w] = null;
+      this.broadcast();
+      return;
+    }
     if (this.status !== 'LOBBY') return;
     const from = this.seatOfSession(sessionId);
     if (from < 0 || to < 0 || to >= MAX_SEATS || this.seats[to] !== null) return;
@@ -359,12 +428,16 @@ export class Room {
     this.game?.destroy();
     this.game = null;
     for (const s of this.seats) if (s?.graceTimer) clearTimeout(s.graceTimer);
+    for (const s of this.watchers) if (s?.graceTimer) clearTimeout(s.graceTimer);
   }
 
   // ------------------------------------------------------------------ gửi tin
 
-  private roomStateFor(idx: number): RoomState {
-    const s = this.seats[idx]!;
+  private roomStateFor(idx: number, watch = -1): RoomState {
+    const s = (watch >= 0 ? this.watchers[watch] : this.seats[idx])!;
+    const watchSeats: (LobbySeat | null)[] = this.watchers.map((x) =>
+      x ? { name: x.name, connected: x.connected, isHost: false, inGame: false } : null,
+    );
     const seats: (LobbySeat | null)[] = this.seats.map((x) =>
       x
         ? {
@@ -377,14 +450,16 @@ export class Room {
     );
     return {
       code: this.code,
-      mySeat: idx,
+      mySeat: watch >= 0 ? -1 : idx,
       seats,
+      watchSeats,
+      myWatch: watch,
       status: this.status,
       countdownEndsAt: this.countdownEndsAt,
       serverNow: Date.now(),
       settings: this.settings,
       options: this.options,
-      playing: s.inGame && !s.left,
+      playing: watch < 0 && s.inGame && !s.left,
     };
   }
 
@@ -392,10 +467,19 @@ export class Room {
     this.seats.forEach((s, i) => {
       if (s?.socketId) this.emit(s.socketId, EV.roomState, this.roomStateFor(i));
     });
+    this.watchers.forEach((s, i) => {
+      if (s?.socketId) this.emit(s.socketId, EV.roomState, this.roomStateFor(-1, i));
+    });
     this.broadcastGame();
   }
 
   sendTo(sessionId: string): void {
+    const w = this.watcherOfSession(sessionId);
+    if (w >= 0) {
+      const ws = this.watchers[w]!;
+      if (ws.socketId) this.emit(ws.socketId, EV.roomState, this.roomStateFor(-1, w));
+      return;
+    }
     const i = this.seatOfSession(sessionId);
     const s = i >= 0 ? this.seats[i] : null;
     if (!s?.socketId) return;
@@ -430,5 +514,6 @@ export class Room {
     for (const s of this.seats) {
       if (s?.socketId && s.inGame) this.emit(s.socketId, EV.gameCue, cue);
     }
+    for (const s of this.watchers) if (s?.socketId) this.emit(s.socketId, EV.gameCue, cue);
   }
 }
