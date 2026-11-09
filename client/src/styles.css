@@ -349,3 +349,11 @@ input:focus { border-color: var(--accent); }
 .watch-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .watch-row .muted { flex-basis: 100%; }
 .watch-row .seat { flex: 1 1 140px; }
+
+/* Menu các mục trong màn hình hướng dẫn */
+.guide-tabs { display: flex; gap: 6px; width: 100%; overflow-x: auto; padding-bottom: 6px; flex: none; }
+.guide-tab { flex: none; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--muted); font-size: 14px; cursor: pointer; white-space: nowrap; }
+.guide-tab.on { background: linear-gradient(180deg, #7a98ea, #5b78cc); border-color: transparent; color: #fff; }
+.guide-scroll p { margin: 0 0 10px; line-height: 1.5; }
+.modal-card.guide { height: min(640px, 100%); }
+.modal-card.guide .guide-scroll { flex: 1; min-height: 0; }

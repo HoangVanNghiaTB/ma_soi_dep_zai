@@ -101,10 +101,10 @@ export function RoleCard({ roleId, intro = false }: { roleId: RoleId; intro?: bo
 const FACTION_ORDER: Faction[] = ['village', 'wolf', 'third'];
 
 /** Cách chơi của cả 15 vai, chia theo phe. */
-export function RolesList() {
+export function RolesList({ only }: { only?: Faction } = {}) {
   return (
     <>
-      {FACTION_ORDER.map((f) => (
+      {FACTION_ORDER.filter((f) => !only || f === only).map((f) => (
         <section key={f}>
           <h3 className={f}>{FACTION_NAMES[f]}</h3>
           {ROLE_IDS.filter((id) => ROLES[id].faction === f).map((id) => {
