@@ -44,10 +44,10 @@ Một trang web Ma Sói 3D riêng (không còn nằm trong rạp), **thay bộ b
 - **Tài liệu:** đề xuất luật, thiết kế kỹ thuật, kịch bản quản trò.
 - **Mã nguồn** (TypeScript): `shared/` (vai, giao thức, cấu hình), `server/` (Node + Socket.IO), `client/` (React + three.js), `tests/`.
 - **Đủ 15 vai**, chia vai ngẫu nhiên cân bằng điểm (tổng từ −3 đến +3), theo thuật toán trong thư mục `werewolf/` bạn gửi.
-- **Phòng và bàn chờ:** tạo phòng bằng mã hoặc link, 10 ghế, đếm ngược bắt đầu, chủ phòng mời người ra, chỉnh vài mốc thời gian, tạm dừng ván, nối lại khi rớt mạng (giữ ghế 60 giây).
+- **Phòng và bàn chờ:** tạo phòng bằng mã hoặc link, 15 ghế, đếm ngược bắt đầu, chủ phòng mời người ra, chỉnh vài mốc thời gian, tạm dừng ván, nối lại khi rớt mạng (giữ ghế 60 giây).
 - **Hiệu ứng:** súng và đạn của Thợ Săn, bình thuốc của Phù Thủy, bia mộ, trái tim cặp đôi.
 - **Âm thanh:** 23 file giọng quản trò và 7 hiệu ứng, đặt ở `client/public/audio/`.
-- **Kiểm thử:** 51 kiểm thử qua, gồm 36 ván bot mô phỏng ngẫu nhiên đủ cỡ bàn 5–10 (ván luôn kết thúc, không lộ vai).
+- **Kiểm thử:** 51 kiểm thử qua, gồm 66 ván bot mô phỏng ngẫu nhiên đủ cỡ bàn 5–15 (ván luôn kết thúc, không lộ vai).
 - **Đã chụp thử** màn hình trên trình duyệt thật và giả lập điện thoại (dọc, ngang, ngang nhỏ).
 - **Dọn dẹp:** bỏ các thư mục cũ của rạp (`dist`, `public`, `sounds-quanTro`). Phần Ma Sói trong đó trùng hệt file đã có.
 
@@ -76,3 +76,4 @@ Một trang web Ma Sói 3D riêng (không còn nằm trong rạp), **thay bộ b
 - **Chọn vai ở bàn chờ:** chỉ chủ phòng chọn, bằng nút − / + cho từng vai. Phải chọn đủ bằng số người đang ngồi, có ít nhất một Sói và một người ngoài phe Sói; vai được xáo ngẫu nhiên cho từng người. Xoá hết thì máy tự chia cân bằng như cũ.
 - **Thời gian đọc vai đầu ván:** mặc định 20 giây (chỉnh 5–60 giây), chủ phòng bật hoặc tắt được. Thẻ bài tự mở chi tiết trong lúc đọc, hết giờ mới vào đêm 1.
 - **Bàn 5 người:** chia vai bất kỳ, chỉ theo tổng điểm cân bằng (−3 đến +3), không còn quy tắc số Sói hay phe thứ ba. Vẫn giữ: mỗi lá không quá số bản của bộ bài thật, và có ít nhất một Sói.
+- **Thêm 7 vai:** Kẻ Ngốc, Người Yêu Hoà Bình, Người Mang Dáng Sói, Thầy Đồng, Thám Tử Ngoại Cảm, Phù Thủy Sói, Tiên Tri Nữ (tổng 22 vai). Chi tiết ở [CAC_ROLE_CHUA_CO.md](CAC_ROLE_CHUA_CO.md). Lời gọi của ba vai có lượt đêm mới chưa có file giọng.

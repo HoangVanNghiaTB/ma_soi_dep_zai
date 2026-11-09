@@ -46,7 +46,7 @@ export function hintText(v: GameView): string {
       case 'bite':
         return 'Chọn người để cắn';
       case 'vote':
-        return 'Chọn người để treo cổ';
+        return p.info ?? 'Chọn người để treo cổ';
       case 'pair':
         return 'Chọn hai người thành đôi';
       case 'protect':
@@ -63,6 +63,12 @@ export function hintText(v: GameView): string {
         return 'Chọn người để đầu độc';
       case 'compare':
         return 'Chọn hai người để so sánh';
+      case 'findSeer':
+        return 'Chọn người để tìm Tiên Tri';
+      case 'sense':
+        return 'Chọn người để cảm nhận';
+      case 'scan':
+        return 'Chọn người để dò quanh họ';
       case 'shoot':
         return 'Chọn người để bắn';
     }

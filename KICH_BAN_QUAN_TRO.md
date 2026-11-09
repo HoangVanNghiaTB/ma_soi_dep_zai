@@ -22,7 +22,7 @@ Gồm **thông báo trời tối, trời sáng, hết giờ thảo luận** và 
 
 ## Gọi các vai trong đêm
 
-Mỗi vai có một câu **thức dậy** và một câu **nhắm mắt**. Riêng Phù Thủy có thêm một câu hỏi về bình độc, vì Phù Thủy có hai việc (cứu và đầu độc). Thứ tự gọi: Thần Tình Yêu, **Bảo Vệ**, Ma Sói, **Kẻ Phản Bội**, Sói Đầu Đàn, Sói Trắng, Tiên Tri, Phù Thủy, Nhà Ngoại Cảm. Bảo Vệ gọi trước bầy Sói để Sói Đầu Đàn biết người bị cắn có được che không. **Kẻ Phản Bội chỉ gọi đêm đầu, gọi dậy ngay sau khi gọi Ma Sói dậy, và gọi ngủ ngay sau khi gọi Ma Sói nhắm mắt** (Kẻ Phản Bội thấy được bầy Sói nhưng không thao tác).
+Mỗi vai có một câu **thức dậy** và một câu **nhắm mắt**. Riêng Phù Thủy có thêm một câu hỏi về bình độc, vì Phù Thủy có hai việc (cứu và đầu độc). Thứ tự gọi: Thần Tình Yêu, **Bảo Vệ**, Ma Sói, **Kẻ Phản Bội**, Sói Đầu Đàn, Sói Trắng, Tiên Tri (cùng Tiên Tri Nữ), **Phù Thủy Sói**, **Thầy Đồng**, **Thám Tử Ngoại Cảm**, Phù Thủy, Nhà Ngoại Cảm. Bảo Vệ gọi trước bầy Sói để Sói Đầu Đàn biết người bị cắn có được che không. **Kẻ Phản Bội chỉ gọi đêm đầu, gọi dậy ngay sau khi gọi Ma Sói dậy, và gọi ngủ ngay sau khi gọi Ma Sói nhắm mắt** (Kẻ Phản Bội thấy được bầy Sói nhưng không thao tác).
 
 | # | Tên file | Lời đọc | Ghi chú |
 |---|---|---|---|
@@ -47,7 +47,20 @@ Mỗi vai có một câu **thức dậy** và một câu **nhắm mắt**. Riên
 | 20 | `gm_psychic_wake` | "Nhà Ngoại Cảm thức dậy. Hãy chọn hai người để so sánh." | |
 | 21 | `gm_psychic_sleep` | "Nhà Ngoại Cảm nhắm mắt lại." | Đã có file |
 
-Các vai **không có việc ban đêm** nên không cần lời gọi: Dân làng, Thợ Săn, Thị Trưởng, Hoàng Tử, Sói Con, Chán Đời.
+Các vai **không có việc ban đêm** nên không cần lời gọi: Dân làng, Thợ Săn, Thị Trưởng, Hoàng Tử, Sói Con, Chán Đời, Kẻ Ngốc, Người Yêu Hoà Bình, Người Mang Dáng Sói. Tiên Tri Nữ dùng chung câu gọi Tiên Tri.
+
+### Câu mới cho các vai thêm sau (chưa có file giọng)
+
+Game đã chạy đủ các lượt này, hiện chữ trên bàn và chờ đúng thời lượng, nhưng **chưa có tiếng** cho tới khi bạn thu và bỏ file vào `client/public/audio/gm/`. Thời lượng trong game là ước lượng thời gian đọc; thu xong cần đo lại và sửa trong `server/src/game/cues.ts`.
+
+| Tên file | Lời |
+|---|---|
+| `gm_sorceress_wake` | "Phù Thủy Sói thức dậy. Hãy tìm xem ai là Tiên Tri." |
+| `gm_sorceress_sleep` | "Phù Thủy Sói nhắm mắt lại." |
+| `gm_medium_wake` | "Thầy Đồng thức dậy. Hãy chọn một người để cảm nhận." |
+| `gm_medium_sleep` | "Thầy Đồng nhắm mắt lại." |
+| `gm_detective_wake` | "Thám Tử Ngoại Cảm thức dậy. Hãy chọn một người để dò." |
+| `gm_detective_sleep` | "Thám Tử Ngoại Cảm nhắm mắt lại." |
 
 ## Lưu ý: chỉ gọi vai có trong ván
 

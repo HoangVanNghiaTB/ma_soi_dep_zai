@@ -60,7 +60,7 @@ export function Lobby() {
   const total = chosen.reduce((sum, r) => sum + ROLES[r].balance, 0);
   const unbalanced = chosen.length > 0 && (total < -3 || total > 3);
   const totalText = total > 0 ? `+${total}` : String(total);
-  const maxOf = (r: RoleId) => (r === 'villager' ? 10 : r === 'werewolf' ? 3 : 1);
+  const maxOf = (r: RoleId) => (r === 'villager' ? MAX_SEATS : r === 'werewolf' ? 3 : 1);
 
   async function setRoles(roles: RoleId[]) {
     setError(null);
@@ -76,7 +76,7 @@ export function Lobby() {
 
   function change(r: RoleId, d: number) {
     if (d > 0) {
-      if (copies(r) >= maxOf(r) || chosen.length >= 10) return;
+      if (copies(r) >= maxOf(r) || chosen.length >= MAX_SEATS) return;
       void setRoles([...chosen, r]);
     } else {
       const i = chosen.lastIndexOf(r);
@@ -206,7 +206,7 @@ export function Lobby() {
                       <b>{copies(r)}</b>
                       <button
                         className="btn small ghost"
-                        disabled={copies(r) >= maxOf(r) || chosen.length >= 10}
+                        disabled={copies(r) >= maxOf(r) || chosen.length >= MAX_SEATS}
                         onClick={() => change(r, 1)}
                       >
                         +

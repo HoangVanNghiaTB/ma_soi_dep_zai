@@ -15,7 +15,7 @@ function seatAngle(i: number, n: number, my: number): number {
 }
 
 function seatRadius(n: number): number {
-  return n <= 6 ? 3.7 : 4.0;
+  return n <= 6 ? 3.7 : n <= 10 ? 4.0 : 4.9;
 }
 
 function seatPos(i: number, n: number, r: number, my: number): THREE.Vector3 {
@@ -26,6 +26,7 @@ function seatPos(i: number, n: number, r: number, my: number): THREE.Vector3 {
 const BODY_COLORS = [
   '#e07a5f', '#81b29a', '#f2cc8f', '#6d8ee0', '#c77dff',
   '#4cc9f0', '#f4a261', '#90be6d', '#ef476f', '#b8c0ff',
+  '#2ec4b6', '#ffbf69', '#9d4edd', '#06d6a0', '#e5989b',
 ];
 
 // ---------------------------------------------------------------- camera

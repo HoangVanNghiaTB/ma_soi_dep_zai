@@ -16,7 +16,8 @@ export function checkWinner(players: readonly Alive[]): Winner | null {
   if (alive.length === 1 && alive[0].role === 'whitewolf') return 'whitewolf';
 
   const wolfKinds = alive.filter((p) => isWolfKind(p.role)).length;
-  const traitors = alive.filter((p) => p.role === 'traitor').length;
+  // Kẻ Phản Bội và Phù Thủy Sói là đồng bọn của Sói: Dân phải loại cả hai mới thắng.
+  const traitors = alive.filter((p) => p.role === 'traitor' || p.role === 'sorceress').length;
   if (wolfKinds === 0 && traitors === 0) return 'village';
 
   const wolfTeam = alive.filter((p) => isWolfTeam(p.role)).length;

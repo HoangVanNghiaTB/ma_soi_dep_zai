@@ -20,6 +20,13 @@ export const ICON_EMOJI: Record<IconId, string> = {
   traitor: '🎭',
   jester: '🤡',
   whitewolf: '🤍',
+  fool: '🃏',
+  pacifist: '🕊️',
+  lycan: '🐶',
+  medium: '🕯️',
+  detective: '🕵️',
+  sorceress: '🧙',
+  seeress: '🔭',
   wolf: '🐺',
   heart: '❤️',
   tomb: '🪦',
@@ -43,6 +50,7 @@ export function themeOf(role: RoleId): Theme {
     case 'cub':
     case 'alpha':
     case 'traitor':
+    case 'sorceress':
       return 'wolf';
     case 'jester':
       return 'jester';

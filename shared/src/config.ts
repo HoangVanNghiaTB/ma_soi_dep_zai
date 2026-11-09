@@ -9,6 +9,9 @@ export interface Windows {
   witch: number;
   witchPoison: number;
   psychic: number;
+  sorceress: number;
+  medium: number;
+  detective: number;
 }
 
 export interface Timings {
@@ -42,14 +45,14 @@ export interface Timings {
   emptyRoomMs: number;
 }
 
-export const MAX_SEATS = 10;
+export const MAX_SEATS = 15;
 
 /** Số ghế xem (chỉ nghe quản trò, không chơi). */
 export const MAX_WATCH = 2;
 
 export const DEFAULT_TIMINGS: Timings = {
   minPlayers: 5,
-  maxPlayers: 10,
+  maxPlayers: 15,
   countdownMs: 15_000,
   minRealPlayers: 3,
   startPauseMs: 1_500,
@@ -66,6 +69,9 @@ export const DEFAULT_TIMINGS: Timings = {
     witch: 10_000,
     witchPoison: 8_000,
     psychic: 10_000,
+    sorceress: 8_000,
+    medium: 8_000,
+    detective: 8_000,
   },
   idleMinMs: 5_000,
   idleMaxMs: 10_000,

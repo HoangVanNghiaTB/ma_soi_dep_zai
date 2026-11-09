@@ -7,7 +7,7 @@ Các lựa chọn công nghệ ở mục 2 là **đề xuất**, đổi được
 ## 1. Mục tiêu và phạm vi
 
 - Web riêng thay thẻ bài và quản trò cho nhóm ngồi chung phòng hoặc gọi Discord. Không mic, không voice.
-- 5 đến 10 người một phòng, mỗi người một ghế cố định quanh bàn tròn 3D, chỉ xoay nhìn.
+- 5 đến 15 người một phòng, mỗi người một ghế cố định quanh bàn tròn 3D, chỉ xoay nhìn.
 - Server là quản trò tự động và là **nguồn sự thật duy nhất**. Trình duyệt chỉ hiển thị và gửi lựa chọn.
 - Không tài khoản, không cơ sở dữ liệu, không điểm. Phòng sống trong bộ nhớ server, mất khi server khởi động lại.
 - Chạy được trên điện thoại (chạm để chọn).
@@ -88,7 +88,7 @@ type Phase =
 interface Room {
   code: string;                 // mã phòng, 5 ký tự
   hostId: string;               // chủ phòng
-  seats: (SeatPlayer | null)[]; // 10 ghế cố định
+  seats: (SeatPlayer | null)[]; // 15 ghế cố định
   settings: Timings;            // các mốc thời gian chủ phòng chỉnh
   game: Game | null;            // null khi đang ở bàn chờ
   paused: boolean;
@@ -168,7 +168,7 @@ Mỗi bước chuyển giai đoạn do **server hẹn giờ** (`setTimeout` ho�
 
 ### 6.1 Bắt đầu và huỷ
 
-- Bắt đầu: chủ phòng, đủ 5 người. Đủ 10 người thì bỏ qua đếm ngược.
+- Bắt đầu: chủ phòng, đủ 5 người. Đủ 15 người thì bỏ qua đếm ngược.
 - Đang đếm ngược mà tụt dưới 5 người thì huỷ đếm ngược.
 - Trong ván, còn dưới **3 người thật** (không tính người do server chơi thay) hoặc quá **40 phút** thì huỷ ván.
 

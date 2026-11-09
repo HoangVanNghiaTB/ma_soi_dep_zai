@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { EV } from '@ms/shared';
+import { EV, MAX_SEATS } from '@ms/shared';
 import { Room, checkRoleList } from '../server/src/rooms/room';
 
 function makeRoom(n: number, emit: (id: string, ev: string, p: unknown) => void = () => {}): Room {
@@ -73,7 +73,7 @@ describe('ghế xem', () => {
 
   it('ghế xem nhận lời quản trò, ghế chơi đầy thì người mới vào ghế xem', () => {
     const got: string[] = [];
-    const room = makeRoom(10, (id, ev) => {
+    const room = makeRoom(MAX_SEATS, (id, ev) => {
       if (ev === EV.gameCue) got.push(id);
     });
     expect(room.join('w1', 'Loa', 'sockw1')).toEqual({ ok: true, seat: -1 });
@@ -99,7 +99,7 @@ describe('ghế xem', () => {
     expect(room.watchers[0]).toBeNull();
     expect(room.seats[7]?.sessionId).toBe('s4');
     room.moveToWatch('s4', 1);
-    expect(room.kick('s0', 10 + 1)).toBeNull();
+    expect(room.kick('s0', MAX_SEATS + 1)).toBeNull();
     expect(room.watchers[1]).toBeNull();
     room.dispose();
   });

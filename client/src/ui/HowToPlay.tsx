@@ -34,7 +34,7 @@ function Content({ tab }: { tab: TabId }) {
       return (
         <>
           <ul className="abilities">
-            <li>Một người tạo phòng và gửi mã phòng hoặc link cho cả nhóm. Cần từ 5 đến 10 người.</li>
+            <li>Một người tạo phòng và gửi mã phòng hoặc link cho cả nhóm. Cần từ 5 đến 15 người.</li>
             <li>Chủ phòng có thể chọn vai cho ván (có cảnh báo nếu lệch phe), chỉnh thời gian và bật tắt giờ đọc vai.</li>
             <li>
               Chơi cùng phòng: cho một máy vào <b>ghế xem</b> và bật loa để cả bàn nghe quản trò. Ghế xem không chơi.

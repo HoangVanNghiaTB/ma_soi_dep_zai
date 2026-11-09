@@ -64,6 +64,9 @@ type StepId =
   | 'alpha'
   | 'whitewolf'
   | 'seer'
+  | 'sorceress'
+  | 'medium'
+  | 'detective'
   | 'witchHeal'
   | 'witchPoison'
   | 'psychic';
@@ -116,7 +119,10 @@ const ORDER: { id: StepId; cards: RoleId[]; when?: (night: number) => boolean }[
   { id: 'wolves2', cards: ['werewolf', 'cub', 'alpha', 'whitewolf'] },
   { id: 'alpha', cards: ['alpha'] },
   { id: 'whitewolf', cards: ['whitewolf'], when: (n) => n % 2 === 0 },
-  { id: 'seer', cards: ['seer'] },
+  { id: 'seer', cards: ['seer', 'seeress'] },
+  { id: 'sorceress', cards: ['sorceress'] },
+  { id: 'medium', cards: ['medium'] },
+  { id: 'detective', cards: ['detective'] },
   { id: 'witchHeal', cards: ['witch'] },
   { id: 'witchPoison', cards: ['witch'] },
   { id: 'psychic', cards: ['psychic'] },
@@ -199,7 +205,9 @@ export class Game {
       isMayor: roles[i] === 'mayor',
     }));
     this.dealt = new Set(roles);
-    this.deck = ROLE_IDS.flatMap((id) => roles.filter((r) => r === id));
+    // Kẻ Ngốc và Người Yêu Hoà Bình là vai giấu kín: trong danh sách công khai họ hiện như Dân làng.
+    const shown = roles.map((r) => (r === 'fool' || r === 'pacifist' ? 'villager' : r));
+    this.deck = ROLE_IDS.flatMap((id) => shown.filter((r) => r === id));
   }
 
   // ---------------------------------------------------------------- vòng đời
@@ -446,7 +454,18 @@ export class Game {
           w.whitewolf,
         );
       case 'seer':
-        return base([CUES.seerWake], [CUES.seerSleep], this.aliveBy('seer'), w.seer);
+        return base(
+          [CUES.seerWake],
+          [CUES.seerSleep],
+          [...this.aliveBy('seer'), ...this.aliveBy('seeress')],
+          w.seer,
+        );
+      case 'sorceress':
+        return base([CUES.sorceressWake], [CUES.sorceressSleep], this.aliveBy('sorceress'), w.sorceress);
+      case 'medium':
+        return base([CUES.mediumWake], [CUES.mediumSleep], this.aliveBy('medium'), w.medium);
+      case 'detective':
+        return base([CUES.detectiveWake], [CUES.detectiveSleep], this.aliveBy('detective'), w.detective);
       case 'witchHeal':
         return base(
           [CUES.witchWake],
@@ -680,6 +699,14 @@ export class Game {
   private resolveVote(): void {
     this.bump();
     this.pointers.clear();
+    // Kẻ Ngốc không được bỏ qua: hết giờ mà chưa chọn thì phiếu rơi vào một người ngẫu nhiên.
+    for (const p of this.players) {
+      if (p.role !== 'fool' || !p.alive) continue;
+      if (this.votes.get(p.seat) === undefined || this.votes.get(p.seat) === 'skip') {
+        const others = this.players.filter((x) => x.alive && x.seat !== p.seat);
+        if (others.length > 0) this.votes.set(p.seat, others[Math.floor(this.rng() * others.length)].seat);
+      }
+    }
     const count = new Map<number, number>();
     for (const [voter, v] of this.votes) {
       if (v === 'skip') continue;
@@ -813,12 +840,24 @@ export class Game {
     }
     if (this.phase === 'DAY_VOTE') {
       if (this.votes.has(seat)) return null;
+      if (p.role === 'pacifist') {
+        // Không có ai để chọn: chỉ bấm "Bỏ qua" được.
+        return {
+          kind: 'vote',
+          label: 'Vote',
+          skipLabel: 'Bỏ qua',
+          pick: 1,
+          targets: [],
+          info: 'Bạn là Người Yêu Hoà Bình: phiếu của bạn luôn là bỏ qua',
+        };
+      }
       return {
         kind: 'vote',
         label: 'Vote',
-        skipLabel: 'Bỏ qua',
+        skipLabel: p.role === 'fool' ? 'Chọn ngẫu nhiên' : 'Bỏ qua',
         pick: 1,
         targets: this.players.filter((x) => x.alive && x.seat !== seat).map((x) => x.seat),
+        info: p.role === 'fool' ? 'Bạn là Kẻ Ngốc: không được bỏ qua phiếu' : undefined,
       };
     }
 
@@ -876,6 +915,18 @@ export class Game {
         };
       case 'seer':
         return { kind: 'see', label: 'Soi', skipLabel: 'Bỏ qua', pick: 1, targets: others() };
+      case 'sorceress':
+        return { kind: 'findSeer', label: 'Tìm', skipLabel: 'Bỏ qua', pick: 1, targets: others() };
+      case 'medium':
+        return { kind: 'sense', label: 'Cảm nhận', skipLabel: 'Bỏ qua', pick: 1, targets: others() };
+      case 'detective':
+        return {
+          kind: 'scan',
+          label: 'Dò',
+          skipLabel: 'Bỏ qua',
+          pick: 1,
+          targets: this.players.filter((x) => x.alive).map((x) => x.seat),
+        };
       case 'witchHeal': {
         const victims = this.biteVictims().map((s) => this.name(s));
         return {
@@ -971,8 +1022,35 @@ export class Game {
         break;
       case 'see': {
         const target = this.players[t[0]];
-        addNote(`Đêm ${this.night}: ${target.name} ${isWolfKind(target.role) ? 'là Sói' : 'không phải Sói'}.`);
+        // Người Mang Dáng Sói bị soi ra là Sói dù là Dân làng.
+        const wolfy = isWolfKind(target.role) || target.role === 'lycan';
+        addNote(`Đêm ${this.night}: ${target.name} ${wolfy ? 'là Sói' : 'không phải Sói'}.`);
         this.feed.push(`${who} soi ${target.name}.`);
+        break;
+      }
+      case 'findSeer': {
+        const target = this.players[t[0]];
+        const isSeer = target.role === 'seer' || target.role === 'seeress';
+        addNote(`Đêm ${this.night}: ${target.name} ${isSeer ? 'là Tiên Tri' : 'không phải Tiên Tri'}.`);
+        this.feed.push(`${who} tìm Tiên Tri ở ${target.name}.`);
+        break;
+      }
+      case 'sense': {
+        const target = this.players[t[0]];
+        const special = target.role !== 'villager' && target.role !== 'werewolf';
+        addNote(`Đêm ${this.night}: ${target.name} ${special ? 'có vai đặc biệt' : 'không có vai đặc biệt'}.`);
+        this.feed.push(`${who} cảm nhận ${target.name}.`);
+        break;
+      }
+      case 'scan': {
+        const target = this.players[t[0]];
+        const n = this.players.length;
+        const around = [(t[0] + n - 1) % n, t[0], (t[0] + 1) % n].map((s) => this.players[s]);
+        const found = around.some((x) => x.alive && isWolfKind(x.role));
+        addNote(
+          `Đêm ${this.night}: quanh ${target.name} (cùng hai người ngồi cạnh) ${found ? 'có Sói' : 'không có Sói'}.`,
+        );
+        this.feed.push(`${who} dò quanh ${target.name}.`);
         break;
       }
       case 'heal': {
@@ -1009,7 +1087,10 @@ export class Game {
     if (!prompt) return;
     this.pointers.delete(seat);
     if (prompt.kind === 'vote') {
-      this.votes.set(seat, 'skip');
+      // Kẻ Ngốc không bỏ qua được: nút "Chọn ngẫu nhiên" chọn giúp một người.
+      const pool = prompt.targets;
+      const fool = this.players[seat].role === 'fool' && pool.length > 0;
+      this.votes.set(seat, fool ? pool[Math.floor(this.rng() * pool.length)] : 'skip');
     } else if (prompt.kind === 'shoot') {
       this.fireHunter(null);
       return;

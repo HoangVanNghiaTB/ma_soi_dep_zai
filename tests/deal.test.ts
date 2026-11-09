@@ -3,10 +3,11 @@ import { ROLES } from '@ms/shared';
 import type { RoleId } from '@ms/shared';
 import { BALANCE, FALLBACK, balanceOf, dealRoles, wolfCount } from '../server/src/game/deal';
 
-const WOLF_TEAM: RoleId[] = ['werewolf', 'cub', 'alpha', 'traitor'];
+const WOLF_TEAM: RoleId[] = ['werewolf', 'cub', 'alpha', 'traitor', 'sorceress'];
 const SPECIAL_ONCE: RoleId[] = [
   'seer', 'guard', 'hunter', 'witch', 'mayor', 'prince', 'psychic', 'cupid',
   'cub', 'alpha', 'traitor', 'jester', 'whitewolf',
+  'fool', 'pacifist', 'lycan', 'medium', 'detective', 'sorceress', 'seeress',
 ];
 
 describe('wolfCount', () => {
@@ -16,12 +17,15 @@ describe('wolfCount', () => {
     expect(wolfCount(7)).toBe(2);
     expect(wolfCount(8)).toBe(3);
     expect(wolfCount(10)).toBe(3);
+    expect(wolfCount(12)).toBe(3);
+    expect(wolfCount(13)).toBe(4);
+    expect(wolfCount(15)).toBe(4);
   });
 });
 
 describe('dealRoles', () => {
   it('mọi cỡ bàn: đủ N vai, đúng luật chia, tổng điểm cân bằng trong [-3, +3]', () => {
-    for (let n = 6; n <= 10; n++) {
+    for (let n = 6; n <= 15; n++) {
       for (let k = 0; k < 300; k++) {
         const roles = dealRoles(n);
         expect(roles).toHaveLength(n);
@@ -36,6 +40,8 @@ describe('dealRoles', () => {
         expect(third.length).toBeLessThanOrEqual(1);
         if (n < 8) expect(third).toHaveLength(0);
         if (n < 6) expect(roles).not.toContain('cupid');
+        // Tiên Tri Nữ chỉ ra ở bàn lớn (từ 10 người).
+        if (n < 10) expect(roles).not.toContain('seeress');
         // Bàn 5 người không có Nhà Ngoại Cảm.
         if (n < 6) expect(roles).not.toContain('psychic');
 
@@ -71,7 +77,7 @@ describe('dealRoles', () => {
   it('Sói Con chỉ xuất hiện khi ván có ít nhất hai Sói', () => {
     const wolfKind = ['werewolf', 'cub', 'alpha', 'whitewolf'];
     let sawCub = 0;
-    for (let n = 5; n <= 10; n++) {
+    for (let n = 5; n <= 15; n++) {
       for (let k = 0; k < 400; k++) {
         const roles = dealRoles(n);
         if (roles.includes('cub')) {

@@ -71,6 +71,8 @@ const GM_KEYS = [
   'alpha_wake', 'alpha_sleep', 'whitewolf_wake', 'whitewolf_sleep',
   'seer_wake', 'seer_sleep', 'witch_wake', 'witch_poison', 'witch_sleep',
   'psychic_wake', 'psychic_sleep',
+  // Các lời gọi vai mới: chưa có file giọng thì chỉ hiện chữ.
+  'sorceress_wake', 'sorceress_sleep', 'medium_wake', 'medium_sleep', 'detective_wake', 'detective_sleep',
 ];
 
 export const PRELOAD = [

@@ -24,13 +24,13 @@ Ngoài đời không ai muốn làm quản trò, và bộ bài giấy thì phi�
 | 4 | Không gian | 3D, bàn tròn, mỗi người một ghế. |
 | 5 | Di chuyển | Không. Ngồi yên tại ghế, chỉ xoay nhìn. |
 | 6 | Thao tác chọn người | Chỉ con trỏ vào người đó (chuột hoặc chạm), hiện nút chốt cạnh nút "Bỏ qua"; bấm nút chốt là xong, không đổi ý. |
-| 7 | Vai | 15 vai, chia ngẫu nhiên, tổng điểm cân bằng từ −3 đến +3 (mục 5). |
+| 7 | Vai | 22 vai, chia ngẫu nhiên, tổng điểm cân bằng từ −3 đến +3 (mục 5). |
 
 ## 3. Vào phòng và bàn chờ
 
 1. Một người **tạo phòng**, nhận **mã phòng** hoặc đường link. Người khác vào bằng mã hoặc link, nhập tên. Chưa cần đăng ký tài khoản.
-2. Mỗi phòng có **một bàn tròn, tối đa 10 ghế**. Vào phòng là được xếp **một ghế**. Có thể đổi sang ghế trống khi ván chưa bắt đầu.
-3. **Chủ phòng** (người tạo) bấm "Bắt đầu" khi có **từ 5 người** trở lên. Hết 15 giây đếm ngược cho người khác kịp vào. Đủ 10 người thì bắt đầu ngay. Chủ phòng thoát thì quyền chuyển cho người kế.
+2. Mỗi phòng có **một bàn tròn, tối đa 15 ghế**. Vào phòng là được xếp **một ghế**. Có thể đổi sang ghế trống khi ván chưa bắt đầu.
+3. **Chủ phòng** (người tạo) bấm "Bắt đầu" khi có **từ 5 người** trở lên. Hết 15 giây đếm ngược cho người khác kịp vào. Đủ 15 người thì bắt đầu ngay. Chủ phòng thoát thì quyền chuyển cho người kế.
 4. Đang đếm ngược mà tụt xuống dưới 5 người thì **huỷ đếm ngược**.
 5. **Không vào giữa ván.** Người đến sau chờ ván kế tiếp.
 6. Hết ván, mọi người **ở lại bàn chờ** của phòng, chủ phòng bấm bắt đầu ván mới. Vai được chia lại.
@@ -79,9 +79,9 @@ Người chết **biến thành bia mộ** ngay tại ghế của mình (ngườ
 
 Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân bằng**, không liên quan tới điểm thưởng nào cả). Đây không phải chuẩn chính thức nên cần chơi thử rồi chỉnh. Chọn 15 vai **không phụ thuộc chỗ ngồi** (bỏ Hiệp Sĩ Kiếm Rỉ, Kẻ Khủng Bố...), vì dù bàn tròn nhưng người chơi không cần nhớ ai ngồi cạnh ai.
 
-### 5.1 Danh sách 15 vai
+### 5.1 Danh sách 22 vai
 
-**Phe Dân làng (9 vai)**
+**Phe Dân làng (15 vai)**
 
 | Vai | Điểm cân bằng | Việc làm |
 |---|---|---|
@@ -93,15 +93,22 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
 | Thị Trưởng | +2 | Phiếu bầu treo cổ tính hai phiếu. Mọi người đều biết ai là Thị Trưởng. |
 | Hoàng Tử | +2 | Bị treo cổ lần đầu thì không chết, và lộ vai cho cả bàn. |
 | Nhà Ngoại Cảm | +4 | Mỗi đêm chỉ hai người, biết họ có cùng phe không (Dân hay Sói, phe thứ ba tính riêng). |
+| Kẻ Ngốc | +2 | Không có việc ban đêm. Khi bỏ phiếu **không được bỏ qua**: bấm "Chọn ngẫu nhiên" hoặc hết giờ mà chưa chọn thì phiếu rơi vào một người ngẫu nhiên. |
+| Người Yêu Hoà Bình | −2 | Không có việc ban đêm. Phiếu **luôn là bỏ qua** (chỉ bấm "Bỏ qua" được), nên vô tình cứu người bị nghi. |
+| Người Mang Dáng Sói | −1 | Dân làng, nhưng Tiên Tri và Tiên Tri Nữ soi ra là **Sói**. Các vai khác vẫn coi là Dân làng. |
+| Thầy Đồng | +3 | Mỗi đêm chọn một người, biết họ **có vai đặc biệt không**. "Không đặc biệt" chỉ là Dân làng thường và Ma Sói thường; mọi vai còn lại là đặc biệt. |
+| Thám Tử Ngoại Cảm | +3 | Mỗi đêm chọn một người (kể cả mình), biết **trong ba người liền nhau** (người đó và hai người ngồi hai bên, chỉ tính người còn sống) **có Sói không**, không biết ai. Kẻ Phản Bội và Phù Thủy Sói không tính là Sói. |
+| Tiên Tri Nữ | +7 | Y hệt Tiên Tri, được gọi cùng lượt. Chỉ xuất hiện ở bàn từ 10 người. |
 | Thần Tình Yêu | +3 | Đêm đầu chỉ hai người thành đôi. Một người chết thì người kia cũng chết. Cặp đôi có thể thuộc bất cứ phe nào. Hai người trong cặp thấy biểu tượng trái tim trên đầu nhau. |
 
-**Phe Ma Sói (4 vai)**
+**Phe Ma Sói (5 vai)**
 
 | Vai | Điểm cân bằng | Việc làm |
 |---|---|---|
 | Ma Sói | −6 | Cùng bầy Sói chọn một người để cắn mỗi đêm. |
 | Sói Con | −8 | Khi bị loại, bầy Sói được cắn thêm một người vào đêm kế tiếp. |
 | Sói Đầu Đàn | −9 | Từ đêm 2, một lần trong ván, biến người bị cắn thành Sói thay vì giết. Chỉ biến được khi Bảo Vệ không che người đó và sau khi biến số Sói vẫn ít hơn số người còn lại. Người bị biến đổi biểu tượng thành Sói, thấy bầy Sói và vào chat Sói. Nếu người bị biến là Thị Trưởng thì vẫn giữ mũ Thị Trưởng trên đầu và phiếu tính hai (người ngoài không thấy gì thay đổi). |
+| Phù Thủy Sói | −3 | Mỗi đêm được gọi riêng, chọn một người để biết họ **có phải Tiên Tri (hoặc Tiên Tri Nữ) không**. Sói và Phù Thủy Sói **không biết nhau**, Phù Thủy Sói không vào chat Sói. Tiên Tri soi ra là người. Tính vào phe Sói khi so số người; Dân phải loại cả Phù Thủy Sói mới thắng. |
 | Kẻ Phản Bội | −6 | Chỉ đêm đầu, được gọi dậy ngay sau bầy Sói để nhận ra các Sói, không thao tác được. Giúp Sói thắng, nhưng Sói không biết nó. Tiên Tri soi ra là người. |
 
 **Phe thứ ba (2 vai)**
@@ -118,6 +125,7 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
    - Số người phe Sói (Ma Sói, Sói Con, Sói Đầu Đàn, Kẻ Phản Bội): **2** khi N = 6 hoặc 7, **3** khi N từ 8 đến 10. Luôn có ít nhất một **Sói thật** (không chỉ Kẻ Phản Bội).
    - Ma Sói tối đa 3 lá. Dân làng không giới hạn. Các vai còn lại mỗi vai tối đa **một** lá.
    - **Phe thứ ba** chỉ xuất hiện khi N ≥ 8, mỗi ván tối đa **một** vai phe thứ ba.
+   - Phù Thủy Sói được rút như một chỗ của phe Sói (cùng Kẻ Phản Bội). Tiên Tri Nữ chỉ có khi N ≥ 10. Các vai mới (Kẻ Ngốc, Người Yêu Hoà Bình, Người Mang Dáng Sói, Thầy Đồng, Thám Tử Ngoại Cảm) rút như các vai đặc biệt khác.
 2. **Cộng điểm cân bằng** các lá vừa rút. Tổng nằm trong **−3 đến +3** thì dùng, không thì rút lại (thử tối đa vài trăm lần).
 3. Không ra đội hình hợp lệ (hiếm) thì dùng **đội hình mẫu** dưới đây rồi xáo ngẫu nhiên cho từng người.
 

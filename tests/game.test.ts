@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_TIMINGS } from '@ms/shared';
 import type { ChatMsg, Cue, Fx, GameView, RoleId, Timings } from '@ms/shared';
 import { Game } from '../server/src/game/game';
+import { checkWinner } from '../server/src/game/win';
 
 // ----------------------------------------------------------------- tiện ích
 
@@ -536,6 +537,16 @@ describe('phe Sói', () => {
     expect(a.slice().sort()).toEqual(['hunter', 'seer', 'villager', 'villager', 'werewolf']);
   });
 
+  it('Kẻ Ngốc và Người Yêu Hoà Bình không lộ trong danh sách vai công khai (hiện như Dân làng)', () => {
+    const h = make(['werewolf', 'fool', 'pacifist', 'seer', V]);
+    h.game.start();
+    const deck = view(h.game, 0).deck;
+    expect(deck).toHaveLength(5);
+    expect(deck).not.toContain('fool');
+    expect(deck).not.toContain('pacifist');
+    expect(deck.filter((r) => r === 'villager')).toHaveLength(3);
+  });
+
   it('Có thời gian đọc vai: đứng yên đúng introMs rồi mới vào đêm 1', () => {
     const h = make(['werewolf', 'seer', V, V, V], { intro: true });
     h.game.start();
@@ -553,6 +564,21 @@ describe('phe Sói', () => {
     const h = make(['werewolf', 'seer', V, V, V]);
     h.game.start();
     expect(h.game.phase).toBe('NIGHT');
+  });
+
+  it('Danh sách vai chốt lúc bắt đầu, không đổi khi Sói Đầu Đàn biến người thành Sói', () => {
+    const h = make(['alpha', 'werewolf', 'mayor', V, V, V, V]);
+    h.game.start();
+    const before = view(h.game, 4).deck.slice();
+    doSkip(h.game, 0, 'bite');
+    passDay(h.game);
+    doAct(h.game, 0, 'bite', [3]);
+    doAct(h.game, 0, 'convert', []);
+    toDay(h.game);
+    expect(h.game.players[3].role).toBe('werewolf');
+    expect(view(h.game, 4).deck).toEqual(before);
+    expect(view(h.game, 4).deck.filter((r) => r === 'villager')).toHaveLength(4);
+    expect(view(h.game, 4).deck.filter((r) => r === 'werewolf')).toHaveLength(1);
   });
 
   it('Thị Trưởng bị biến thành Sói vẫn giữ mũ Thị Trưởng và phiếu x2; Sói thấy thêm biểu tượng Sói', () => {
@@ -773,6 +799,7 @@ const FAST: Partial<Timings> = {
   windows: {
     cupid: 1_500, guard: 1_500, wolf: 2_000, alpha: 1_500, whitewolf: 1_500,
     seer: 1_500, witch: 1_500, witchPoison: 1_500, psychic: 1_500,
+    sorceress: 1_500, medium: 1_500, detective: 1_500,
   },
 };
 
@@ -848,14 +875,146 @@ function botGame(n: number, seed: number): void {
 
 describe('mô phỏng hàng loạt', () => {
   it('ván luôn kết thúc, không kẹt, không lộ vai, mọi cỡ bàn', () => {
-    for (let n = 5; n <= 10; n++) {
+    for (let n = 5; n <= 15; n++) {
       for (let seed = 1; seed <= 6; seed++) botGame(n, n * 1000 + seed);
     }
     // Các ván mô phỏng phải đủ đa dạng: nhiều đêm, cả hai phe đều thắng, nhiều loại vai xuất hiện.
-    expect(stats.games).toBe(36);
+    expect(stats.games).toBe(66);
     expect(stats.nights / stats.games).toBeGreaterThan(2);
     expect(stats.winners.get('village')).toBeGreaterThan(0);
     expect(stats.winners.get('wolf')).toBeGreaterThan(0);
     expect(stats.roles.size).toBeGreaterThanOrEqual(12);
   }, 120_000);
+});
+
+describe('Các vai thêm sau', () => {
+  it('Người Mang Dáng Sói: Tiên Tri soi ra là Sói, Phù Thủy Sói soi ra không phải Sói', () => {
+    const h = make(['werewolf', 'seer', 'lycan', 'sorceress', V, V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 1, 'see', [2]);
+    expect(view(h.game, 1).notes).toEqual(['Đêm 1: P2 là Sói.']);
+    toDay(h.game);
+    passDay(h.game);
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 1, 'see', [3]);
+    expect(view(h.game, 1).notes).toEqual(['Đêm 2: P3 không phải Sói.']);
+  });
+
+  it('Tiên Tri Nữ được gọi cùng lượt với Tiên Tri, mỗi người soi riêng', () => {
+    const h = make(['werewolf', 'seer', 'seeress', V, V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 1, 'see', [0]);
+    doAct(h.game, 2, 'see', [3]);
+    expect(view(h.game, 1).notes).toEqual(['Đêm 1: P0 là Sói.']);
+    expect(view(h.game, 2).notes).toEqual(['Đêm 1: P3 không phải Sói.']);
+  });
+
+  it('Thầy Đồng biết một người có vai đặc biệt hay không', () => {
+    const h = make(['werewolf', 'medium', 'seer', 'cub', V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 1, 'sense', [0]);
+    expect(view(h.game, 1).notes).toEqual(['Đêm 1: P0 không có vai đặc biệt.']);
+    toDay(h.game);
+    passDay(h.game);
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 1, 'sense', [3]);
+    expect(view(h.game, 1).notes).toEqual(['Đêm 2: P3 có vai đặc biệt.']);
+    expect(view(h.game, 4).notes).toEqual([]);
+  });
+
+  it('Thám Tử Ngoại Cảm biết trong ba chỗ ngồi liền nhau có Sói không (Kẻ Phản Bội không tính)', () => {
+    const h = make(['werewolf', V, V, 'detective', V, V, 'traitor']);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    // Quanh ghế 1: ghế 0, 1, 2 -> có Sói ở ghế 0.
+    doAct(h.game, 3, 'scan', [1]);
+    expect(view(h.game, 3).notes).toEqual(['Đêm 1: quanh P1 (cùng hai người ngồi cạnh) có Sói.']);
+    toDay(h.game);
+    passDay(h.game);
+    doSkip(h.game, 0, 'bite');
+    // Quanh ghế 6 (ghế 5, 6, 0): ghế 0 là Sói.
+    doAct(h.game, 3, 'scan', [4]);
+    // Quanh ghế 4: ghế 3, 4, 5 -> không có Sói.
+    expect(view(h.game, 3).notes).toEqual(['Đêm 2: quanh P4 (cùng hai người ngồi cạnh) không có Sói.']);
+  });
+
+  it('Thám Tử không tính Kẻ Phản Bội là Sói', () => {
+    const h = make(['werewolf', V, V, 'detective', V, V, 'traitor']);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    // Quanh ghế 5: ghế 4, 5, 6 -> chỉ có Kẻ Phản Bội.
+    doAct(h.game, 3, 'scan', [5]);
+    expect(view(h.game, 3).notes).toEqual(['Đêm 1: quanh P5 (cùng hai người ngồi cạnh) không có Sói.']);
+  });
+
+  it('Phù Thủy Sói tìm Tiên Tri; Sói không biết Phù Thủy Sói', () => {
+    const h = make(['werewolf', 'seer', 'sorceress', V, V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 2, 'findSeer', [1]);
+    expect(view(h.game, 2).notes).toEqual(['Đêm 1: P1 là Tiên Tri.']);
+    expect(view(h.game, 0).players[2].icon).toBeNull();
+    expect(view(h.game, 2).players[0].icon).toBeNull();
+    expect(view(h.game, 2).canChat).toBe(false);
+    toDay(h.game);
+    passDay(h.game);
+    doSkip(h.game, 0, 'bite');
+    doAct(h.game, 2, 'findSeer', [3]);
+    expect(view(h.game, 2).notes).toEqual(['Đêm 2: P3 không phải Tiên Tri.']);
+  });
+
+  it('Dân làng chưa thắng khi Phù Thủy Sói còn sống', () => {
+    expect(
+      checkWinner([
+        { role: 'villager', alive: true },
+        { role: 'villager', alive: true },
+        { role: 'sorceress', alive: true },
+        { role: 'werewolf', alive: false },
+      ]),
+    ).toBeNull();
+    expect(
+      checkWinner([
+        { role: 'villager', alive: true },
+        { role: 'sorceress', alive: true },
+        { role: 'werewolf', alive: false },
+      ]),
+    ).toBe('wolf');
+    expect(
+      checkWinner([
+        { role: 'villager', alive: true },
+        { role: 'sorceress', alive: false },
+        { role: 'werewolf', alive: false },
+      ]),
+    ).toBe('village');
+  });
+
+  it('Kẻ Ngốc không bỏ qua được phiếu: bỏ qua thì phiếu rơi vào một người', () => {
+    const h = make(['werewolf', 'fool', V, V, V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    toDay(h.game);
+    toPhase(h.game, 'DAY_VOTE');
+    const p = view(h.game, 1).prompt!;
+    expect(p.skipLabel).toBe('Chọn ngẫu nhiên');
+    // Mọi người bỏ qua, riêng Kẻ Ngốc cũng bấm bỏ qua -> vẫn có người bị treo (hoặc hết ván).
+    for (const pl of h.game.players) if (pl.alive) h.game.skip(pl.seat);
+    run(h.game, () => h.game.night === 2 || h.game.phase === 'END');
+    expect(h.game.players.filter((x) => !x.alive).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('Người Yêu Hoà Bình chỉ bỏ qua được, không chọn được ai', () => {
+    const h = make(['werewolf', 'pacifist', V, V, V, V]);
+    h.game.start();
+    doSkip(h.game, 0, 'bite');
+    toDay(h.game);
+    toPhase(h.game, 'DAY_VOTE');
+    expect(view(h.game, 1).prompt?.targets).toEqual([]);
+    h.game.act(1, 'vote', [0]);
+    expect(view(h.game, 1).prompt).not.toBeNull();
+    h.game.skip(1);
+    expect(view(h.game, 1).prompt).toBeNull();
+  });
 });

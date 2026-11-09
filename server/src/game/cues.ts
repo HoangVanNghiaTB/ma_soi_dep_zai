@@ -28,6 +28,12 @@ const TEXT: Record<string, string> = {
   witch_sleep: 'Phù Thủy nhắm mắt lại.',
   psychic_wake: 'Nhà Ngoại Cảm thức dậy. Hãy chọn hai người để so sánh.',
   psychic_sleep: 'Nhà Ngoại Cảm nhắm mắt lại.',
+  sorceress_wake: 'Phù Thủy Sói thức dậy. Hãy tìm xem ai là Tiên Tri.',
+  sorceress_sleep: 'Phù Thủy Sói nhắm mắt lại.',
+  medium_wake: 'Thầy Đồng thức dậy. Hãy chọn một người để cảm nhận.',
+  medium_sleep: 'Thầy Đồng nhắm mắt lại.',
+  detective_wake: 'Thám Tử Ngoại Cảm thức dậy. Hãy chọn một người để dò.',
+  detective_sleep: 'Thám Tử Ngoại Cảm nhắm mắt lại.',
 };
 
 function clip(key: string, ms: number, sfx?: string): CueDef {
@@ -58,6 +64,13 @@ export const CUES = {
   witchSleep: clip('witch_sleep', 1300),
   psychicWake: clip('psychic_wake', 3600),
   psychicSleep: clip('psychic_sleep', 1500),
+  // Các lời gọi vai mới chưa có file giọng: chỉ hiện chữ, thời lượng là ước lượng thời gian đọc.
+  sorceressWake: clip('sorceress_wake', 3000),
+  sorceressSleep: clip('sorceress_sleep', 1600),
+  mediumWake: clip('medium_wake', 3000),
+  mediumSleep: clip('medium_sleep', 1400),
+  detectiveWake: clip('detective_wake', 3200),
+  detectiveSleep: clip('detective_sleep', 1700),
   hang: { id: 'hang', text: '', sfx: 'hang', ms: 0, showMs: 0 } as CueDef,
 };
 

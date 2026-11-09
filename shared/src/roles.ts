@@ -15,7 +15,14 @@ export type RoleId =
   | 'alpha'
   | 'traitor'
   | 'jester'
-  | 'whitewolf';
+  | 'whitewolf'
+  | 'fool'
+  | 'pacifist'
+  | 'lycan'
+  | 'medium'
+  | 'detective'
+  | 'sorceress'
+  | 'seeress';
 
 export interface RoleDef {
   id: RoleId;
@@ -51,10 +58,12 @@ export function cardLabel(id: RoleId): string {
   return id === 'jester' ? 'Chán Đời' : 'Sói Trắng';
 }
 
-const VILLAGE_GOAL = 'Thắng khi tất cả Sói và Kẻ Phản Bội bị loại.';
+const VILLAGE_GOAL = 'Thắng khi mọi Sói và đồng bọn của Sói (Kẻ Phản Bội, Phù Thủy Sói) bị loại.';
 const WOLF_GOAL = 'Thắng khi số người phe Sói còn sống không ít hơn số người còn lại.';
 
-export const ROLES: Record<RoleId, RoleDef> = {
+type NewRoleId = 'fool' | 'pacifist' | 'lycan' | 'medium' | 'detective' | 'sorceress' | 'seeress';
+
+const BASE_ROLES: Record<Exclude<RoleId, NewRoleId>, RoleDef> = {
   villager: {
     id: 'villager', name: 'Dân làng', faction: 'village', balance: 1, nightCall: false,
     effect: 'Không có chức năng. Thảo luận và bỏ phiếu để tìm Sói.',
@@ -239,11 +248,108 @@ export const ROLES: Record<RoleId, RoleDef> = {
   },
 };
 
+const NEW_ROLES: Record<NewRoleId, RoleDef> = {
+fool: {
+  id: 'fool', name: 'Kẻ Ngốc', faction: 'village', balance: 2, nightCall: false,
+  effect: 'Khi bỏ phiếu bạn không được bỏ qua: luôn phải chọn một người để treo cổ.',
+  win: 'Diệt hết Sói',
+  howTo: 'Phiếu của bạn luôn phải treo cổ một người, không được bỏ qua.',
+  abilities: [
+    'Không có việc ban đêm.',
+    'Ban ngày bạn không được bỏ qua phiếu. Bấm "Chọn ngẫu nhiên" hoặc hết giờ mà chưa chọn thì phiếu của bạn rơi vào một người ngẫu nhiên.',
+    'Bạn vẫn thắng cùng Dân làng.',
+  ],
+  goal: VILLAGE_GOAL,
+},
+
+pacifist: {
+  id: 'pacifist', name: 'Người Yêu Hoà Bình', faction: 'village', balance: -2, nightCall: false,
+  effect: 'Phiếu của bạn luôn là "bỏ qua", bạn không bao giờ chọn treo cổ ai.',
+  win: 'Diệt hết Sói',
+  howTo: 'Phiếu của bạn luôn là bỏ qua, không treo cổ ai.',
+  abilities: [
+    'Không có việc ban đêm.',
+    'Khi bỏ phiếu bạn chỉ bấm được "Bỏ qua". Dù vậy bạn vẫn được thảo luận và thuyết phục người khác.',
+    'Vì thế bạn vô tình giúp Sói: một phiếu cứu chắc chắn cho người bị nghi.',
+    'Bạn vẫn thắng cùng Dân làng.',
+  ],
+  goal: VILLAGE_GOAL,
+},
+
+lycan: {
+  id: 'lycan', name: 'Người Mang Dáng Sói', faction: 'village', balance: -1, nightCall: false,
+  effect: 'Bạn là Dân làng, nhưng Tiên Tri soi bạn ra là Sói.',
+  win: 'Diệt hết Sói',
+  howTo: 'Dân làng bị Tiên Tri soi nhầm là Sói.',
+  abilities: [
+    'Không có việc ban đêm.',
+    'Tiên Tri và Tiên Tri Nữ soi bạn ra "Là Sói", dù bạn không phải.',
+    'Các vai khác (Nhà Ngoại Cảm, Thầy Đồng, Thám Tử Ngoại Cảm) vẫn coi bạn là Dân làng.',
+    'Hãy thuyết phục mọi người đừng treo cổ oan bạn.',
+  ],
+  goal: VILLAGE_GOAL,
+},
+
+medium: {
+  id: 'medium', name: 'Thầy Đồng', faction: 'village', balance: 3, nightCall: true,
+  effect: 'Mỗi đêm chọn một người, biết họ có vai đặc biệt không (khác Dân làng thường và Ma Sói thường).',
+  win: 'Diệt hết Sói',
+  howTo: 'Mỗi đêm biết một người có vai đặc biệt hay không.',
+  abilities: [
+    'Mỗi đêm khi được gọi, chỉ vào một người rồi bấm "Cảm nhận".',
+    'Bạn biết người đó có phải vai đặc biệt không. Dân làng thường và Ma Sói thường là "không đặc biệt"; mọi vai còn lại là "đặc biệt".',
+    'Kết quả chỉ giữ trong đêm đó, sang đêm mới là mất.',
+  ],
+  goal: VILLAGE_GOAL,
+},
+
+detective: {
+  id: 'detective', name: 'Thám Tử Ngoại Cảm', faction: 'village', balance: 3, nightCall: true,
+  effect: 'Mỗi đêm chọn một người, biết trong người đó và hai người ngồi hai bên có Sói không.',
+  win: 'Diệt hết Sói',
+  howTo: 'Mỗi đêm biết quanh một người (ba chỗ ngồi liền nhau) có Sói không.',
+  abilities: [
+    'Mỗi đêm khi được gọi, chỉ vào một người (kể cả mình) rồi bấm "Dò".',
+    'Bạn biết trong ba người liền nhau (người đó và hai người ngồi hai bên, chỉ tính người còn sống) có Sói không, nhưng không biết ai là Sói.',
+    'Kẻ Phản Bội và Phù Thủy Sói không tính là Sói. Kết quả chỉ giữ trong đêm đó.',
+  ],
+  goal: VILLAGE_GOAL,
+},
+
+sorceress: {
+  id: 'sorceress', name: 'Phù Thủy Sói', faction: 'wolf', balance: -3, nightCall: true,
+  effect: 'Mỗi đêm tìm Tiên Tri. Sói không biết bạn, Tiên Tri soi bạn ra là người.',
+  win: 'Sói áp đảo số người',
+  howTo: 'Mỗi đêm đoán một người có phải Tiên Tri không. Sói không biết bạn.',
+  abilities: [
+    'Mỗi đêm khi được gọi, chỉ vào một người rồi bấm "Tìm". Bạn biết người đó có phải Tiên Tri (hoặc Tiên Tri Nữ) không.',
+    'Bạn thức dậy riêng, không biết Sói là ai và không vào chat Sói. Sói cũng không biết bạn.',
+    'Tiên Tri soi bạn ra "Không phải Sói". Bạn tính vào phe Sói khi so số người; Dân phải loại cả bạn mới thắng.',
+  ],
+  goal: WOLF_GOAL,
+},
+
+seeress: {
+  id: 'seeress', name: 'Tiên Tri Nữ', faction: 'village', balance: 7, nightCall: true,
+  effect: 'Y hệt Tiên Tri: mỗi đêm soi một người xem có phải Sói không. Bàn lớn có thể có cả hai.',
+  win: 'Diệt hết Sói',
+  howTo: 'Mỗi đêm soi một người xem có phải Sói không.',
+  abilities: [
+    'Mỗi đêm khi được gọi, chỉ vào một người rồi bấm "Soi".',
+    'Kết quả: "Là Sói" hoặc "Không phải Sói". Kẻ Phản Bội và Phù Thủy Sói soi ra là người, Sói Trắng và Người Mang Dáng Sói soi ra là Sói.',
+    'Được gọi cùng lượt với Tiên Tri. Kết quả chỉ giữ trong đêm đó.',
+  ],
+  goal: VILLAGE_GOAL,
+},
+};
+
+export const ROLES: Record<RoleId, RoleDef> = { ...BASE_ROLES, ...NEW_ROLES };
+
 export const ROLE_IDS = Object.keys(ROLES) as RoleId[];
 
 /** Phe Sói khi so sánh số người để thắng. Không gồm Sói Trắng. */
 export function isWolfTeam(role: RoleId): boolean {
-  return role === 'werewolf' || role === 'cub' || role === 'alpha' || role === 'traitor';
+  return role === 'werewolf' || role === 'cub' || role === 'alpha' || role === 'traitor' || role === 'sorceress';
 }
 
 /** Sói thật (bị tính là Sói khi Dân cần diệt hết). */

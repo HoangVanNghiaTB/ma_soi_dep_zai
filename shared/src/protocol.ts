@@ -27,6 +27,9 @@ export type PromptKind =
   | 'heal'
   | 'poison'
   | 'compare'
+  | 'findSeer'
+  | 'sense'
+  | 'scan'
   | 'shoot';
 
 export interface Prompt {
