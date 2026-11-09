@@ -104,3 +104,31 @@ describe('ghế xem', () => {
     room.dispose();
   });
 });
+
+describe('bot chơi thử', () => {
+  it('thêm bot vào ghế trống, chủ phòng vẫn là người thật, bot không giữ phòng sống', () => {
+    const room = makeRoom(1);
+    room.addBots(5);
+    expect(room.seats.filter(Boolean)).toHaveLength(6);
+    expect(room.seats.filter((s) => s?.bot)).toHaveLength(5);
+    expect(room.hostSession).toBe('s0');
+    room.leave('s0');
+    expect(room.isEmpty()).toBe(true);
+    expect(room.hostSession).toBeNull();
+    room.dispose();
+  });
+
+  it('có bot thì ván chạy được và bot tự thao tác', () => {
+    vi.useFakeTimers();
+    const room = makeRoom(1);
+    room.addBots(5);
+    expect(room.requestStart('s0')).toBeNull();
+    vi.advanceTimersByTime(room.settings.countdownMs + 100);
+    expect(room.game).not.toBeNull();
+    // Chủ phòng không làm gì; bot và đồng hồ đẩy ván đi qua ít nhất một ngày.
+    vi.advanceTimersByTime(5 * 60_000);
+    expect(room.game === null || room.game.night >= 2).toBe(true);
+    room.dispose();
+    vi.useRealTimers();
+  });
+});

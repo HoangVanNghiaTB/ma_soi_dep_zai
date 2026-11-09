@@ -49,9 +49,9 @@ Mỗi vai có một câu **thức dậy** và một câu **nhắm mắt**. Riên
 
 Các vai **không có việc ban đêm** nên không cần lời gọi: Dân làng, Thợ Săn, Thị Trưởng, Hoàng Tử, Sói Con, Chán Đời, Kẻ Ngốc, Người Yêu Hoà Bình, Người Mang Dáng Sói. Tiên Tri Nữ dùng chung câu gọi Tiên Tri.
 
-### Câu mới cho các vai thêm sau (chưa có file giọng)
+### Câu cho các vai thêm sau (đã có file giọng)
 
-Game đã chạy đủ các lượt này, hiện chữ trên bàn và chờ đúng thời lượng, nhưng **chưa có tiếng** cho tới khi bạn thu và bỏ file vào `client/public/audio/gm/`. Thời lượng trong game là ước lượng thời gian đọc; thu xong cần đo lại và sửa trong `server/src/game/cues.ts`.
+Cả 6 file đã nằm trong `client/public/audio/gm/`, thời lượng đã đo từ file thật và ghi trong `server/src/game/cues.ts`.
 
 | Tên file | Lời |
 |---|---|
@@ -68,6 +68,6 @@ Mỗi đêm quản trò **chỉ gọi những vai đã được chia trong ván 
 
 ## Tổng cộng
 
-**23 câu** trong kịch bản (2 câu trời tối / sáng, 1 câu bỏ phiếu, 1 bản ngắn gọi Ma Sói và 19 câu gọi vai: 8 vai × 2 câu, cộng Phù Thủy 3 câu). **Hiện có đủ 23 file** trong `client/public/audio/gm/`.
+**29 câu** trong kịch bản (2 câu trời tối / sáng, 1 câu bỏ phiếu, 1 bản ngắn gọi Ma Sói và 25 câu gọi vai: 11 vai × 2 câu, cộng Phù Thủy 3 câu). **Hiện có đủ 29 file** trong `client/public/audio/gm/`.
 
 Không câu nào nói tên người chơi. Bạn thu xong thì bỏ file vào một thư mục (ví dụ `client/public/gm/`). Câu nào chưa có file thì game vẫn chạy, chỉ không có tiếng.

@@ -117,6 +117,8 @@ export interface ChatMsg {
 
 export interface LobbySeat {
   name: string;
+  /** Bot do máy điều khiển (chỉ để chơi thử). */
+  bot?: boolean;
   connected: boolean;
   isHost: boolean;
   inGame: boolean;

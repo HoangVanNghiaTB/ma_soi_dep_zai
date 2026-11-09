@@ -21,7 +21,7 @@ Bảy vai "Dễ" đã được lập trình, có thẻ bài, biểu tượng, ki
 | ✅ Tiên Tri Nữ | +7 | Y hệt Tiên Tri, được gọi chung lượt, mỗi người soi riêng. Chỉ xuất hiện ở bàn từ 10 người. |
 
 **Điều cần biết**
-- **Lời gọi của Thầy Đồng, Thám Tử Ngoại Cảm, Phù Thủy Sói chưa có tiếng**, chỉ hiện chữ trên bàn. Danh sách câu cần thu ở [KICH_BAN_QUAN_TRO.md](KICH_BAN_QUAN_TRO.md). Tiên Tri Nữ dùng chung câu gọi Tiên Tri.
+- **Lời gọi của Thầy Đồng, Thám Tử Ngoại Cảm, Phù Thủy Sói đã có giọng quản trò** (6 file, xem [KICH_BAN_QUAN_TRO.md](KICH_BAN_QUAN_TRO.md)). Tiên Tri Nữ dùng chung câu gọi Tiên Tri.
 - **Pháp Sư (Sorcerer) chưa thêm**: tôi coi là trùng với Phù Thủy nên bỏ qua. Nếu bạn vẫn muốn, nói tôi biết.
 - **Kẻ Ngốc và Người Yêu Hoà Bình được giấu**, theo bản gốc: trong danh sách vai công khai dưới thẻ bài, hai vai này hiện như Dân làng nên không ai biết ván có chúng. Hết ván mới lộ.
 - Kết quả của Thầy Đồng, Thám Tử, Phù Thủy Sói giống Tiên Tri: chỉ giữ trong đêm đó, sang đêm mới là mất.
@@ -173,6 +173,7 @@ Chỉ là bản nữ của Tiên Tri, cùng khả năng. Bàn lớn dùng cả h
 ### 4.1 Phù Thủy Sói ✅ Đã thêm (Sorceress, −3, dậy mọi đêm)
 Mỗi đêm **tìm Tiên Tri**: chỉ vào một người, nếu là Tiên Tri hoặc Tiên Tri Nữ thì quản trò giơ hai ngón cái. Sói và Phù Thủy Sói **không biết nhau**. Tiên Tri soi ra Phù Thủy Sói là Dân làng.
 - **Biến thể:** đêm đầu, quản trò cho Phù Thủy Sói biết ai là Sói (lợi thế lớn cho phe Sói).
+- **Đang áp dụng trên web: giữ theo bản gốc, tạm thời.** Phù Thủy Sói được gọi dậy riêng sau Tiên Tri; Sói và cô không biết nhau, cô không vào chat Sói. Chưa dùng biến thể trên; nếu chơi thử thấy phe Sói yếu thì cân nhắc đổi sau (cho cô biết Sói ở đêm đầu, hoặc cho dậy cùng bầy).
 
 ### 4.2 Tay Sai (Minion, −6, không dậy)
 Thường không cần thẻ. Đêm đầu, **Sói chọn một người** để thành Tay Sai, gia nhập phe Sói. Tay Sai **biết Sói là ai** nhưng **không dậy cùng Sói** ban đêm. Tiên Tri soi ra là Dân làng. Nếu người đó đang có vai đặc biệt thì giữ nguyên khả năng (có thể là cả Tiên Tri, lúc đó rất tệ cho Dân làng).

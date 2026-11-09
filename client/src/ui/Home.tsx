@@ -20,6 +20,8 @@ export function Home() {
   const [error, setError] = useState<string | null>(null);
   const [guide, setGuide] = useState(false);
   const [busy, setBusy] = useState(false);
+  // Link chơi thử: thêm ?bots=5 để phòng tạo ra có sẵn 5 bot.
+  const bots = Math.min(14, Math.max(0, Number(new URLSearchParams(location.search).get('bots')) || 0));
 
   const cleanName = name.trim();
 
@@ -58,9 +60,10 @@ export function Home() {
           />
         </label>
 
-        <button className="btn primary" disabled={!connected || busy} onClick={() => run(() => createRoom(cleanName))}>
+        <button className="btn primary" disabled={!connected || busy} onClick={() => run(() => createRoom(cleanName, bots))}>
           Tạo phòng mới
         </button>
+        {bots > 0 && <div className="muted small center">Chế độ chơi thử: phòng sẽ có sẵn {bots} bot.</div>}
 
         <div className="or">hoặc vào phòng có sẵn</div>
 

@@ -14,6 +14,8 @@ interface SeatInfo {
   inGame: boolean;
   /** Đã rời giữa ván, sẽ bị dọn khi ván xong. */
   left: boolean;
+  /** Bot chơi thử do máy điều khiển. */
+  bot?: boolean;
   graceTimer: ReturnType<typeof setTimeout> | null;
 }
 
@@ -60,6 +62,7 @@ export class Room {
 
   private countdownTimer: ReturnType<typeof setTimeout> | null = null;
   private emptyTimer: ReturnType<typeof setTimeout> | null = null;
+  private botTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     code: string,
@@ -91,7 +94,7 @@ export class Room {
   }
 
   isEmpty(): boolean {
-    return this.seats.every((s) => s === null || !s.connected);
+    return this.seats.every((s) => s === null || s.bot || !s.connected);
   }
 
   // ----------------------------------------------------------------- vào / ra
@@ -141,6 +144,57 @@ export class Room {
     if (!this.hostSession) this.hostSession = sessionId;
     this.broadcast();
     return { ok: true, seat: free };
+  }
+
+  /** Thêm bot vào các ghế trống để chơi thử một mình. Chỉ nhận 0 đến 14. */
+  addBots(count: number): void {
+    const n = Math.min(MAX_SEATS - 1, Math.max(0, Math.floor(count)));
+    let k = 0;
+    for (let i = 0; i < n; i++) {
+      const free = this.seats.findIndex((s) => s === null);
+      if (free < 0) break;
+      k++;
+      const info = this.newInfo(`bot-${this.code}-${k}`, `Bot ${k}`, '');
+      info.socketId = null;
+      info.bot = true;
+      this.seats[free] = info;
+    }
+    this.broadcast();
+  }
+
+  /** Bot tự hành động ngẫu nhiên: đủ để thử luồng ván, không cần thông minh. */
+  private botTick(): void {
+    const game = this.game;
+    if (!game || game.paused) return;
+    game.players.forEach((p, gs) => {
+      const info = this.seats.find((s) => s?.sessionId === p.sessionId);
+      if (!info?.bot) return;
+      const v = game.viewFor(gs);
+      if (v.phase === 'DAY_DISCUSS' && Math.random() < 0.2) game.skipDiscuss(gs);
+      const pr = v.prompt;
+      if (!pr || Math.random() > 0.4) return;
+      if (Math.random() < 0.12 || (pr.pick > 0 && pr.targets.length === 0)) {
+        game.skip(gs);
+        return;
+      }
+      const pool = pr.targets.slice();
+      const picked: number[] = [];
+      for (let k = 0; k < pr.pick && pool.length > 0; k++) {
+        picked.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      }
+      game.act(gs, pr.kind, picked);
+    });
+  }
+
+  private startBots(): void {
+    this.stopBots();
+    if (!this.seats.some((s) => s?.bot)) return;
+    this.botTimer = setInterval(() => this.botTick(), 800);
+  }
+
+  private stopBots(): void {
+    if (this.botTimer) clearInterval(this.botTimer);
+    this.botTimer = null;
   }
 
   private newInfo(sessionId: string, name: string, socketId: string): SeatInfo {
@@ -214,7 +268,7 @@ export class Room {
   }
 
   private transferHost(): void {
-    const next = this.seats.find((s) => s && !s.left && s.connected);
+    const next = this.seats.find((s) => s && !s.bot && !s.left && s.connected);
     this.hostSession = next ? next.sessionId : null;
   }
 
@@ -404,9 +458,11 @@ export class Room {
     });
     this.broadcast();
     this.game.start();
+    this.startBots();
   }
 
   private endGame(): void {
+    this.stopBots();
     this.game?.destroy();
     this.game = null;
     for (let i = 0; i < this.seats.length; i++) {
@@ -423,6 +479,7 @@ export class Room {
 
   /** Dọn hết hẹn giờ khi phòng bị xoá. */
   dispose(): void {
+    this.stopBots();
     this.cancelCountdown();
     this.clearEmptyTimer();
     this.game?.destroy();
@@ -442,6 +499,7 @@ export class Room {
       x
         ? {
             name: x.name,
+            bot: x.bot,
             connected: x.connected,
             isHost: x.sessionId === this.hostSession,
             inGame: x.inGame,

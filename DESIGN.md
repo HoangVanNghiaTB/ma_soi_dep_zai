@@ -434,7 +434,7 @@ Dùng HTML (những thứ cần bấm) cho phần ngoài bàn; thông báo nằm
 
 - Server gửi `game:cue` **đúng lúc** (kèm `text`). Client có **hàng đợi phát**: các cue phát nối nhau, không chồng.
 - Mọi cue luôn hiện chữ giữa bàn, dù giọng tắt.
-- Giọng thu sẵn ở `client/public/audio/gm/`, tên theo bảng trong [KICH_BAN_QUAN_TRO.md](KICH_BAN_QUAN_TRO.md). **Thiếu file** thì bỏ qua tiếng, chữ vẫn hiện. Hiện đã đủ 23 file.
+- Giọng thu sẵn ở `client/public/audio/gm/`, tên theo bảng trong [KICH_BAN_QUAN_TRO.md](KICH_BAN_QUAN_TRO.md). **Thiếu file** thì bỏ qua tiếng, chữ vẫn hiện. Hiện đã đủ 29 file.
 - Quản trò chỉ đọc lời gọi của vai **có trong ván**.
 
 ### 13.2 Ai phát giọng
@@ -522,7 +522,7 @@ Sau bước 1 và 2 là chơi được bản thô, nên thử sớm.
 - **Bảo Vệ có tự bảo vệ chính mình được không:** DE_XUAT chưa nói. Đang để **được**, chỉ cấm trùng người đêm trước. Bạn đã đồng ý các luật mặc định.
 - **Thời gian mỗi lượt đêm** lấy theo `werewolf/narration.js` (bản chạy trong rạp), cần chơi thử xem có đủ cho người mới không. Thời lượng từng lời quản trò cũng lấy từ file đó (riêng `psychic_sleep` mới thu nên đang ước 1,5 giây).
 - **Hiệu năng 3D trên điện thoại cũ** chưa đo. Cần thử sớm ở bước 1.
-- **Giọng thu sẵn:** đã đủ 23 file, đặt tên theo `gm_<tên>.mp3`. Hai câu gọi Kẻ Phản Bội cần nghe lại để khớp thứ tự gọi mới.
+- **Giọng thu sẵn:** đã đủ 29 file, đặt tên theo `gm_<tên>.mp3`. Hai câu gọi Kẻ Phản Bội cần nghe lại để khớp thứ tự gọi mới.
 - **Chọn Socket.IO hay WebSocket thuần, React hay thư viện khác:** đề xuất ở mục 2, chưa chốt.
 
 ## 19. Triển khai trên Render

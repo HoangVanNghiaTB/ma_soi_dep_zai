@@ -133,8 +133,8 @@ function request(event: string, payload: unknown): Promise<Ack<{ code: string }>
   });
 }
 
-export async function createRoom(name: string): Promise<string | null> {
-  const a = await request(EV.roomCreate, { name, sessionId });
+export async function createRoom(name: string, bots = 0): Promise<string | null> {
+  const a = await request(EV.roomCreate, { name, sessionId, bots });
   if (!a.ok || !a.data) return a.error ?? 'Không tạo được phòng.';
   saveRoom({ code: a.data.code, name });
   return null;

@@ -64,13 +64,13 @@ export const CUES = {
   witchSleep: clip('witch_sleep', 1300),
   psychicWake: clip('psychic_wake', 3600),
   psychicSleep: clip('psychic_sleep', 1500),
-  // Các lời gọi vai mới chưa có file giọng: chỉ hiện chữ, thời lượng là ước lượng thời gian đọc.
-  sorceressWake: clip('sorceress_wake', 3000),
-  sorceressSleep: clip('sorceress_sleep', 1600),
-  mediumWake: clip('medium_wake', 3000),
-  mediumSleep: clip('medium_sleep', 1400),
-  detectiveWake: clip('detective_wake', 3200),
-  detectiveSleep: clip('detective_sleep', 1700),
+  // Các lời gọi vai thêm sau (thời lượng đo từ file thật).
+  sorceressWake: clip('sorceress_wake', 3550),
+  sorceressSleep: clip('sorceress_sleep', 1550),
+  mediumWake: clip('medium_wake', 2950),
+  mediumSleep: clip('medium_sleep', 1250),
+  detectiveWake: clip('detective_wake', 3300),
+  detectiveSleep: clip('detective_sleep', 1750),
   hang: { id: 'hang', text: '', sfx: 'hang', ms: 0, showMs: 0 } as CueDef,
 };
 

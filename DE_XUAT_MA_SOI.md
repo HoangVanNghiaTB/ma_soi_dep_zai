@@ -146,6 +146,7 @@ Dùng bảng điểm masoi.online làm thước đo (gọi là **điểm cân b�
 - **Cặp đôi của Thần Tình Yêu** chỉ cùng chết, chưa có điều kiện thắng riêng.
 
 ### 5.4 Chỗ tự chọn luật, cần xem lại
+- **Phù Thủy Sói và bầy Sói không biết nhau (đang theo bản gốc, tạm thời):** cô dậy riêng, không vào chat Sói. Nếu chơi thử thấy phe Sói yếu, có thể sửa sau: cho cô biết Sói ở đêm đầu, hoặc cho dậy cùng bầy.
 - **Sói Trắng "thắng khi là Sói cuối cùng":** hiểu là *còn sống một mình* mới thắng.
 - **Thị Trưởng lộ vai từ đầu:** theo thông lệ nhiều bộ, không bắt buộc.
 - **Kẻ Phản Bội** tính vào phe Sói khi so sánh số người, nhưng Sói không biết nó.

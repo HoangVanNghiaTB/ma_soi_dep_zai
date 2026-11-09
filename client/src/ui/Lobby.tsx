@@ -116,6 +116,7 @@ export function Lobby() {
                 <span className="seat-name">{s.name}</span>
                 <span className="seat-tags">
                   {s.isHost && <b>chủ phòng</b>}
+                  {s.bot && <b>bot</b>}
                   {mine && <b>bạn</b>}
                   {!s.connected && <b>mất mạng</b>}
                   {isHost && !mine && inLobby && (

@@ -49,7 +49,7 @@ export function attachSockets(io: Server): RoomManager {
       data.code = room.code;
     }
 
-    socket.on(EV.roomCreate, (p: { name?: string; sessionId?: string }, cb) => {
+    socket.on(EV.roomCreate, (p: { name?: string; sessionId?: string; bots?: unknown }, cb) => {
       if (!allow()) return;
       if (!p || typeof p.sessionId !== 'string' || p.sessionId.length < 8) {
         return respond(cb, { ok: false, error: 'Thiếu mã phiên.' });
@@ -58,6 +58,7 @@ export function attachSockets(io: Server): RoomManager {
       const r = room.join(p.sessionId, String(p.name ?? ''), socket.id);
       if (!r.ok) return respond(cb, { ok: false, error: r.error });
       bind(room, p.sessionId);
+      if (isInt(p.bots) && p.bots > 0) room.addBots(p.bots);
       respond(cb, { ok: true, data: { code: room.code } });
       room.sendTo(p.sessionId);
     });
