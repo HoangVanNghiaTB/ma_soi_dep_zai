@@ -80,6 +80,8 @@ export interface GameView {
   canChat: boolean;
   /** Chỉ người chết ban đêm: ai làm gì đêm nay. */
   feed: string[] | null;
+  /** Bộ vai của ván này (ai cũng thấy, không nói vai nào của ai), xếp theo thứ tự bảng vai. */
+  deck: RoleId[];
   /** Chỉ có khi hết ván: vai thật của mọi người. */
   roles: Record<number, RoleId> | null;
 }

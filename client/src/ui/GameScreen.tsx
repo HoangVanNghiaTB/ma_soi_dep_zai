@@ -148,7 +148,7 @@ function Hud({ view }: { view: GameView }) {
         </button>
       </div>
 
-      <RoleCard roleId={view.me.role} intro={view.phase === 'INTRO'} />
+      <RoleCard roleId={view.me.role} intro={view.phase === 'INTRO'} deck={view.deck} />
 
       <div className="left-stack">
         {view.canChat && <WolfChat />}

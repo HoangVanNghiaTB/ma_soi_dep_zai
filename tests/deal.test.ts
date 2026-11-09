@@ -68,6 +68,21 @@ describe('dealRoles', () => {
     for (const r of ['psychic', 'cupid', 'jester', 'whitewolf', 'traitor']) expect(seen.has(r as never)).toBe(true);
   });
 
+  it('Sói Con chỉ xuất hiện khi ván có ít nhất hai Sói', () => {
+    const wolfKind = ['werewolf', 'cub', 'alpha', 'whitewolf'];
+    let sawCub = 0;
+    for (let n = 5; n <= 10; n++) {
+      for (let k = 0; k < 400; k++) {
+        const roles = dealRoles(n);
+        if (roles.includes('cub')) {
+          sawCub++;
+          expect(roles.filter((r) => wolfKind.includes(r)).length).toBeGreaterThanOrEqual(2);
+        }
+      }
+    }
+    expect(sawCub).toBeGreaterThan(0);
+  });
+
   it('đội hình mẫu đều hợp lệ về điểm', () => {
     for (const [n, roles] of Object.entries(FALLBACK)) {
       expect(roles).toHaveLength(Number(n));

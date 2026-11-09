@@ -357,3 +357,17 @@ input:focus { border-color: var(--accent); }
 .guide-scroll p { margin: 0 0 10px; line-height: 1.5; }
 .modal-card.guide { height: min(640px, 100%); }
 .modal-card.guide .guide-scroll { flex: 1; min-height: 0; }
+
+/* Danh sách vai có trong ván, nằm dưới thẻ bài */
+.deck { width: clamp(190px, 17vw, 250px); display: flex; flex-direction: column; gap: 4px; }
+.deck-title { font-size: 12px; color: var(--muted); text-align: center; }
+.deck-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.deck-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 999px; font-size: 12px; background: rgba(0, 0, 0, 0.45); border: 1px solid var(--line); color: #fff; }
+.deck-chip.wolf { border-color: #ff8f8f; }
+.deck-chip.village { border-color: #7cc4ff; }
+.deck-chip.third { border-color: #c4a7ff; }
+.compact .deck { width: 124px; gap: 2px; }
+.compact .deck-title { font-size: 10px; }
+.compact .deck-chip { font-size: 10px; padding: 1px 5px; gap: 2px; }
+.mini .deck-title { display: none; }
+.mini .deck-name { display: none; }

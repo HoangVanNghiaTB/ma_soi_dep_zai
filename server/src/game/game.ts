@@ -1,4 +1,4 @@
-import { ROLES, isWolfKind, isWolfTeam } from '@ms/shared';
+import { ROLES, ROLE_IDS, isWolfKind, isWolfTeam } from '@ms/shared';
 import type {
   ChatMsg,
   Cue,
@@ -174,6 +174,8 @@ export class Game {
     poisonLeft: true,
     extraBiteNext: false,
   };
+  /** Bộ vai đã chia, công khai cho cả bàn biết ván này có những lá nào. */
+  private readonly deck: RoleId[];
   private ng: NightState = this.freshNight(false);
 
   private readonly t: Timings;
@@ -197,6 +199,7 @@ export class Game {
       isMayor: roles[i] === 'mayor',
     }));
     this.dealt = new Set(roles);
+    this.deck = ROLE_IDS.flatMap((id) => roles.filter((r) => r === id));
   }
 
   // ---------------------------------------------------------------- vòng đời
@@ -1134,6 +1137,7 @@ export class Game {
       notes: this.currentNote(seat),
       canChat: me.alive && mePack && wolvesStep && !this.paused,
       feed: spectator && night ? this.feed : null,
+      deck: this.deck,
       roles,
     };
   }

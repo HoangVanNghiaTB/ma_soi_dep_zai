@@ -33,7 +33,7 @@ function RoleBody({ role }: { role: RoleDef }) {
  * Thẻ bài Ma Sói theo mẫu: nền kem, viền màu theo phe, hàng đầu ghi "MA SÓI" và điểm,
  * hình emoji lớn, tên vai, nhãn phe và tác dụng ngắn gọn. Chạm vào thẻ để xem chi tiết.
  */
-export function RoleCard({ roleId, intro = false }: { roleId: RoleId; intro?: boolean }) {
+export function RoleCard({ roleId, intro = false, deck = [] }: { roleId: RoleId; intro?: boolean; deck?: RoleId[] }) {
   const role = ROLES[roleId];
   const theme = themeOf(roleId);
   const color = THEME_COLOR[theme];
@@ -76,6 +76,23 @@ export function RoleCard({ roleId, intro = false }: { roleId: RoleId; intro?: bo
         <button className="btn small tcard-flip" onClick={() => setDown((d) => !d)}>
           {down ? 'Lật thẻ' : 'Úp thẻ'}
         </button>
+        {deck.length > 0 && (
+          <div className="deck">
+            <div className="deck-title">Vai trong ván này ({deck.length})</div>
+            <div className="deck-list">
+              {[...new Set(deck)].map((id) => {
+                const n = deck.filter((r) => r === id).length;
+                return (
+                  <span key={id} className={`deck-chip ${ROLES[id].faction}`} title={ROLES[id].howTo}>
+                    <Emoji role={id} />
+                    <span className="deck-name">{ROLES[id].name}</span>
+                    {n > 1 && <b>×{n}</b>}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {detail && (

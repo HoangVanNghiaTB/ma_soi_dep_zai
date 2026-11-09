@@ -527,6 +527,15 @@ describe('phe Sói', () => {
     expect(view(h.game, 4).players[3].icon).toBeNull();
   });
 
+  it('Mọi người cùng thấy bộ vai của ván (không biết vai nào của ai)', () => {
+    const h = make(['werewolf', 'seer', 'hunter', V, V]);
+    h.game.start();
+    const a = view(h.game, 0).deck;
+    const b = view(h.game, 4).deck;
+    expect(a).toEqual(b);
+    expect(a.slice().sort()).toEqual(['hunter', 'seer', 'villager', 'villager', 'werewolf']);
+  });
+
   it('Có thời gian đọc vai: đứng yên đúng introMs rồi mới vào đêm 1', () => {
     const h = make(['werewolf', 'seer', V, V, V], { intro: true });
     h.game.start();
